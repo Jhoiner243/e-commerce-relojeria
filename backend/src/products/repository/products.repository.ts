@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { MayoristaOrDetal, Prisma } from '../../../generated/prisma/client';
 import { PrismaService } from '../../common/prisma/prisma';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 
+@Injectable()
 export class ProductsRepository {
   constructor(@Inject(PrismaService) private prisma: PrismaService) {}
 

@@ -1,7 +1,8 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma';
 import { RegisterDto } from '../dto/register.dto';
 
+@Injectable()
 export class AdminRepository {
   constructor(@Inject(PrismaService) private prisma: PrismaService) {}
 

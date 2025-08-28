@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { MayoristaOrDetal, Prisma } from '../../../generated/prisma/client';
 import { PrismaService } from '../../common/prisma/prisma';
-import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
+import { ProductEntity } from '../entities/product.entity';
 
 @Injectable()
 export class ProductsRepository {
@@ -36,7 +36,7 @@ export class ProductsRepository {
     });
   }
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: ProductEntity) {
     return this.prisma.product.create({
       data: createProductDto,
     });

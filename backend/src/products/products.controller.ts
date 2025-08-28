@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Body,
   Controller,
@@ -7,8 +8,11 @@ import {
   Patch,
   Post,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
 import { DomainAccessGuard } from '../common/guards/domain-access.guard';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -24,8 +28,18 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(createProductDto);
+  @UseInterceptors(FileInterceptor('imagen'))
+  create(
+    @Body() createProductDto: CreateProductDto,
+    @UploadedFile() imagen: Express.Multer.File,
+  ) {
+    // Combinar el DTO con el archivo subido
+    const productData: CreateProductDto = {
+      ...createProductDto,
+      imagen,
+    };
+
+    return this.productsService.create(productData);
   }
 
   @UseGuards(DomainAccessGuard)

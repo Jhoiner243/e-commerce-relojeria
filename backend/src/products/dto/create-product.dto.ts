@@ -8,8 +8,7 @@ export class CreateProductDto {
   @IsNumber()
   precio: number;
 
-  @IsString()
-  imagen: string;
+  imagen: Express.Multer.File;
 
   @IsString()
   categoriaName: string;

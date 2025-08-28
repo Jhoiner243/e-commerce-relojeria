@@ -44,7 +44,7 @@ export class ProductsService {
     const product = await this.productsRepository.create(productData);
 
     return {
-      id: Number(product.id),
+      id: product.id,
       nombre: product.nombre,
       precio: product.precio,
       imagenUrl: product.imagen,

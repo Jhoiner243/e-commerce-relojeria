@@ -1,6 +1,6 @@
 import { CartStoreActionsType, CartStoreStateType } from "@/types";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 const useCartStore = create<CartStoreStateType & CartStoreActionsType>()(
   persist(
@@ -11,9 +11,7 @@ const useCartStore = create<CartStoreStateType & CartStoreActionsType>()(
         set((state) => {
           const existingIndex = state.cart.findIndex(
             (p) =>
-              p.id === product.id &&
-              p.selectedSize === product.selectedSize &&
-              p.selectedColor === product.selectedColor
+              p.id === product.id 
           );
 
           if (existingIndex !== -1) {
@@ -28,8 +26,6 @@ const useCartStore = create<CartStoreStateType & CartStoreActionsType>()(
               {
                 ...product,
                 quantity: product.quantity || 1,
-                selectedSize: product.selectedSize,
-                selectedColor: product.selectedColor,
               },
             ],
           };
@@ -39,9 +35,7 @@ const useCartStore = create<CartStoreStateType & CartStoreActionsType>()(
           cart: state.cart.filter(
             (p) =>
               !(
-                p.id === product.id &&
-                p.selectedSize === product.selectedSize &&
-                p.selectedColor === product.selectedColor
+                p.id === product.id 
               )
           ),
         })),

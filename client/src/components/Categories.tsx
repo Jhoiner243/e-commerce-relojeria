@@ -1,12 +1,8 @@
 "use client";
 import {
   Footprints,
-  Glasses,
-  Briefcase,
   Shirt,
-  ShoppingBasket,
-  Hand,
-  Venus,
+  ShoppingBasket
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
@@ -28,29 +24,10 @@ const categories = [
   },
   {
     name: "Accessories",
-    icon: <Glasses className="w-4 h-4" />,
+    icon: <Footprints className="w-4 h-4" />,
     slug: "accessories",
-  },
-  {
-    name: "Bags",
-    icon: <Briefcase className="w-4 h-4" />,
-    slug: "bags",
-  },
-  {
-    name: "Dresses",
-    icon: <Venus className="w-4 h-4" />,
-    slug: "dresses",
-  },
-  {
-    name: "Jackets",
-    icon: <Shirt className="w-4 h-4" />,
-    slug: "jackets",
-  },
-  {
-    name: "Gloves",
-    icon: <Hand className="w-4 h-4" />,
-    slug: "gloves",
-  },
+  }
+ 
 ];
 
 const Categories = () => {
@@ -67,10 +44,10 @@ const Categories = () => {
   };
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2 bg-gray-100 p-2 rounded-lg mb-4 text-sm">
+    <div className="flex gap-2 bg-gray-100 p-2  mb-4 text-sm">
       {categories.map((category) => (
         <div
-          className={`flex items-center justify-center gap-2 cursor-pointer px-2 py-1 rounded-md ${
+          className={`flex flex-1 items-center justify-center gap-2 cursor-pointer px-2 py-1  ${
             category.slug === selectedCategory ? "bg-white" : "text-gray-500"
           }`}
           key={category.name}

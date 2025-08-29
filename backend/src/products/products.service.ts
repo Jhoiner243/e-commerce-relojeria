@@ -50,8 +50,6 @@ export class ProductsService {
       imagenUrl: product.imagen,
       categoriaName: product.categoriaName,
       productType: product.productType,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     };
   }
 

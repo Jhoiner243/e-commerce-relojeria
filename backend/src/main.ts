@@ -5,8 +5,8 @@ import { configCors } from './common/cors/config-cors';
 import { HttpExceptionFilter } from './common/filters/exception';
 
 async function bootstrap() {
-  const logger = new Logger('Main');
   const app = await NestFactory.create(AppModule, { cors: true });
+  const logger = new Logger('Main');
 
   app.enableCors(configCors);
 
@@ -17,6 +17,10 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
     }),
   );
 

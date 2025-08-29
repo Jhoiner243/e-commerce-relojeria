@@ -14,7 +14,14 @@ export function FilesUpload(
   maxCount?: number,
   options?: MulterOptions,
 ) {
+  const interceptorOptions = { ...options };
+  if (typeof maxCount === 'number') {
+    interceptorOptions.limits = {
+      ...(interceptorOptions.limits || {}),
+      files: maxCount,
+    };
+  }
   return applyDecorators(
-    UseInterceptors(FileInterceptor(fieldName, { ...options, maxCount })),
+    UseInterceptors(FileInterceptor(fieldName, interceptorOptions)),
   );
 }

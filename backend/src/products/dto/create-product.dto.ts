@@ -1,4 +1,5 @@
-import { IsNumber, IsString } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { MayoristaOrDetal } from '../../../generated/prisma';
 
 export class CreateProductDto {
@@ -6,13 +7,16 @@ export class CreateProductDto {
   nombre: string;
 
   @IsNumber()
+  @Type(() => Number)
+  @Transform(({ value }) => Number(value))
   precio: number;
 
-  imagen: Express.Multer.File;
+  @IsOptional()
+  imagen?: Express.Multer.File;
 
   @IsString()
   categoriaName: string;
 
-  @IsString()
+  @IsEnum(MayoristaOrDetal)
   productType: MayoristaOrDetal;
 }

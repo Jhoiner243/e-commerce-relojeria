@@ -1,44 +1,53 @@
 "use client";
 
 import {
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
 } from "@/components/ui/sheet";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "./ui/button";
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import { Button } from "./ui/button";
 
 const formSchema = z.object({
-  name: z.string().min(1, { message: "Name is Required!" }),
+  nombre: z.string().min(1, { message: "El nombre es requerido" }),
 });
 
 const AddCategory = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: { nombre: "" },
   });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    await fetch("http://localhost:3003/api/categorias", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
+    });
+  }
   return (
     <SheetContent>
       <SheetHeader>
         <SheetTitle className="mb-4">Add Category</SheetTitle>
         <SheetDescription asChild>
           <Form {...form}>
-            <form className="space-y-8">
+            <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
               <FormField
                 control={form.control}
-                name="name"
+                name="nombre"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Name</FormLabel>

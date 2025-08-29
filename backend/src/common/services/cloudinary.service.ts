@@ -1,19 +1,20 @@
-/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { v2 as cloudinary } from 'cloudinary';
+import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 import { Readable } from 'stream';
+import { envs } from '../config/config';
+
+function bufferToStream(buffer: Buffer): Readable {
+  return Readable.from(buffer);
+}
 
 @Injectable()
 export class CloudinaryService {
-  constructor(private configService: ConfigService) {
+  constructor() {
     cloudinary.config({
-      cloud_name: this.configService.get<string>('CLOUDINARY_CLOUD_NAME'),
-      api_key: this.configService.get<string>('CLOUDINARY_API_KEY'),
-      api_secret: this.configService.get<string>('CLOUDINARY_API_SECRET'),
+      cloud_name: envs.cloudinaryCloudName,
+      api_key: envs.cloudinaryApiKey,
+      api_secret: envs.cloudinaryApiSecret,
     });
   }
 
@@ -22,10 +23,11 @@ export class CloudinaryService {
     folder: string = 'products',
   ): Promise<string> {
     try {
-      // Convertir el buffer a stream
-      const stream = new Readable();
-      stream.push(file.buffer);
-      stream.push(null);
+      if (!file || !file.buffer) {
+        throw new Error('File buffer is missing');
+      }
+
+      const stream = bufferToStream(file.buffer as Buffer);
 
       return new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
@@ -38,11 +40,13 @@ export class CloudinaryService {
               { quality: 'auto:good' },
             ],
           },
-          (error, result) => {
+          (error, result: UploadApiResponse) => {
             if (error) {
-              reject(error);
+              reject(new Error(error.message));
             } else if (result) {
               resolve(result.secure_url);
+            } else {
+              reject(new Error('Unknown error uploading image'));
             }
           },
         );
@@ -50,7 +54,12 @@ export class CloudinaryService {
         stream.pipe(uploadStream);
       });
     } catch (error) {
-      throw new Error(`Error uploading image to Cloudinary: ${error.message}`);
+      if (error instanceof Error) {
+        throw new Error(
+          `Error uploading image to Cloudinary: ${error.message}`,
+        );
+      }
+      throw error;
     }
   }
 
@@ -58,19 +67,23 @@ export class CloudinaryService {
     try {
       await cloudinary.uploader.destroy(publicId);
     } catch (error) {
-      throw new Error(`Error deleting image from Cloudinary: ${error.message}`);
+      if (error instanceof Error) {
+        throw new Error(
+          `Error deleting image from Cloudinary: ${error.message}`,
+        );
+      }
+      throw error;
     }
   }
 
-  async getImageUrl(publicId: string): Promise<string> {
+  getImageUrl(publicId: string): string {
     try {
-      // eslint-disable-next-line @typescript-eslint/await-thenable
-      const result = await cloudinary.url(publicId);
-      return result;
+      return cloudinary.url(publicId);
     } catch (error) {
-      throw new Error(
-        `Error getting image URL from Cloudinary: ${error.message}`,
-      );
+      if (error instanceof Error) {
+        throw new Error(`Error generating Cloudinary URL: ${error.message}`);
+      }
+      return 'Error';
     }
   }
 }

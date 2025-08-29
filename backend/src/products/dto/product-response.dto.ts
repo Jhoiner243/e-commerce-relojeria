@@ -7,6 +7,4 @@ export class ProductResponseDto {
   imagenUrl: string;
   categoriaName: string;
   productType: MayoristaOrDetal;
-  createdAt: Date;
-  updatedAt: Date;
 }

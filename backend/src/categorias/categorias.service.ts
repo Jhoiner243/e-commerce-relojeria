@@ -10,11 +10,11 @@ export class CategoriasService {
     private readonly categoriaRepository: CategoriaRepository,
   ) {}
   create(createCategoriaDto: CreateCategoriaDto) {
-    return createCategoriaDto;
+    return this.categoriaRepository.create(createCategoriaDto);
   }
 
-  findAll() {
-    return `This action returns all categorias`;
+  async findAll() {
+    return await this.categoriaRepository.findAll();
   }
 
   findOne(id: string) {

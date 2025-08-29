@@ -1,16 +1,14 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { AdminModule } from './admin/admin.module';
 import { CategoriasModule } from './categorias/categorias.module';
+import { CommonModule } from './common/common.module';
 import { PrismaModule } from './common/prisma/prisma.module';
 import { ProductsModule } from './products/products.module';
 import { PromotionsModule } from './promotions/promotions.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
+    CommonModule,
     PrismaModule,
     ProductsModule,
     AdminModule,

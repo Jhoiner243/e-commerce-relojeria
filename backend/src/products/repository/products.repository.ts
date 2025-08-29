@@ -25,11 +25,11 @@ export class ProductsRepository {
           categoriaName: selectFields.hideDetails ? false : true,
         }
       : undefined;
-    return this.prisma.product.findMany({ where, select });
+    return await this.prisma.product.findMany({ where, select });
   }
 
   async findOne(id: string) {
-    return this.prisma.product.findUnique({
+    return await this.prisma.product.findUnique({
       where: {
         id,
       },
@@ -37,13 +37,13 @@ export class ProductsRepository {
   }
 
   async create(createProductDto: ProductEntity) {
-    return this.prisma.product.create({
+    return await this.prisma.product.create({
       data: createProductDto,
     });
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
-    return this.prisma.product.update({
+    return await this.prisma.product.update({
       where: {
         id,
       },

@@ -180,7 +180,7 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
                           </SelectTrigger>
                           <SelectContent>
                                                          {categorias.map((cat) => (
-                               <SelectItem key={cat.id} value={cat.nombre}>
+                               <SelectItem key={cat.id} value={cat.id}>
                                  {cat.nombre}
                                </SelectItem>
                              ))}

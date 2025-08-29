@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Body,
   Controller,
@@ -33,7 +32,6 @@ export class ProductsController {
     @Body() createProductDto: CreateProductDto,
     @UploadedFile() imagen: Express.Multer.File,
   ) {
-    console.log('Imagen:', imagen);
     // Combinar el DTO con el archivo subido
     const productData: CreateProductDto = {
       ...createProductDto,

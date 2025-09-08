@@ -1,5 +1,11 @@
 import { Transform, Type } from 'class-transformer';
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { MayoristaOrDetal } from '../../../generated/prisma';
 
 export enum Gender {
@@ -33,4 +39,12 @@ export class CreateProductDto {
 
   @IsEnum(MayoristaOrDetal)
   productType: MayoristaOrDetal;
+
+  @IsOptional()
+  @IsNumber()
+  mayoristaPrice?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  mayorista?: boolean;
 }

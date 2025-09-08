@@ -154,7 +154,6 @@ export class ProductsController {
     @Param('id') id: string,
     @Body() updateWholesaleDto: UpdateWholesaleDto,
   ) {
-    console.log(updateWholesaleDto);
     return this.productsService.updateWholesale(id, updateWholesaleDto);
   }
 

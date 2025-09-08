@@ -32,7 +32,7 @@ const AddCategory = () => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await fetch("http://localhost:3003/api/categorias", {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categorias`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),

@@ -9,8 +9,7 @@ export class CreatePromotionDto {
   @IsNotEmpty()
   descripcion: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   imagen: Express.Multer.File;
 
   @IsBoolean()

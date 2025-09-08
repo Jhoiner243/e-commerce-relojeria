@@ -1,33 +1,34 @@
 "use client";
 
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select";
 import {
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
 } from "@/components/ui/sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { gender } from "../enum/gender";
 import { useProducts } from "../hooks/useProducts";
 import { formSchema, productTypes } from "./schemas/form-product";
 import { Button } from "./ui/button";
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { ScrollArea } from "./ui/scroll-area";
@@ -50,9 +51,12 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
       nombre: "",
       descripcion: "",
       precio: "",
+      gender: undefined as unknown as gender,
       categoriaName: "",
       productType: undefined as unknown as (typeof productTypes)[number],
       imagen: undefined as unknown as File,
+      mayorista: false,
+      mayoristaPrice: "",
     },
   });
   const [categorias, setCategorias] = useState<Categoria[]>([]);
@@ -86,11 +90,14 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
     setSubmitSuccess("");
     const formData = new FormData();
     formData.append("nombre", values.nombre);
+    formData.append("gender", values.gender);
     formData.append("descripcion", values.descripcion);
     formData.append("precio", values.precio.toString());
     formData.append("categoriaName", values.categoriaName);
     formData.append("productType", values.productType);
     formData.append("imagen", values.imagen);
+    formData.append("mayorista", (values.mayorista || false).toString());
+    formData.append("mayoristaPrice", values.mayoristaPrice || "0");
 
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
@@ -234,6 +241,38 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
                     </FormItem>
                   )}
                 />
+  <FormField
+                  control={form.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Genero</FormLabel>
+                      <FormControl>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          disabled={submitting}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Tipo de genero" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.values(gender).map((pt, idx) => (
+                              <SelectItem key={idx} value={pt}>
+                                {pt}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormDescription>
+                        Genero del producto
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="imagen"
@@ -260,10 +299,51 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
 
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="mayoristaPrice"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Precio Mayorista (Opcional)</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="0.01" {...field} disabled={submitting} />
+                      </FormControl>
+                      <FormDescription>
+                        Precio especial para mayoristas
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="mayorista"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                      <FormControl>
+                        <input
+                          type="checkbox"
+                          checked={field.value}
+                          onChange={field.onChange}
+                          disabled={submitting}
+                          className="rounded"
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Producto Mayorista</FormLabel>
+                        <FormDescription>
+                          Marcar si este producto está disponible para mayoristas
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
                
-         
+               
                 <Button type="submit" disabled={submitting || loadingCategorias || categorias.length === 0}>
-                  {submitting ? "Guardando..." : "Submit"}
+                  {submitting ? "Guardando..." : "Guardar"}
                 </Button>
               </form>
             </Form>

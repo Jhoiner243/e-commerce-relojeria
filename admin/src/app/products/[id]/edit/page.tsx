@@ -9,6 +9,7 @@ import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useCategories } from "../../../../hooks/useCategories";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003/api";
 
@@ -20,25 +21,31 @@ interface Product {
   imagen: string;
   categoriaName: string;
   productType: "Mayorista" | "Detal";
+  gender: "All" | "Hombre" | "Mujer" | "Niños" | "Parejas";
   isActive: boolean;
+  mayorista: boolean;
+  mayoristaPrice: number;
 }
 
 export default function EditProductPage({ params }: { params: { id: string } }) {
+
   const router = useRouter();
+  const { id } = params;
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
+  const {categories} = useCategories()
 
   useEffect(() => {
     fetchProduct();
-  }, [params.id]);
+  }, [id]);
 
   const fetchProduct = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/products/${params.id}`);
+      const response = await fetch(`${API_BASE_URL}/products/${id}`);
       if (!response.ok) {
         throw new Error('Producto no encontrado');
       }
@@ -78,15 +85,22 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
       formData.append('precio', product.precio.toString());
       formData.append('categoriaName', product.categoriaName);
       formData.append('productType', product.productType);
+      formData.append('gender', product.gender);
       formData.append('isActive', product.isActive.toString());
+      formData.append('mayorista', product.mayorista.toString());
+      formData.append('mayoristaPrice', product.mayoristaPrice.toString());
 
       if (imageFile) {
         formData.append('imagen', imageFile);
       }
 
-      const response = await fetch(`${API_BASE_URL}/products/${params.id}`, {
+      console.log(Array.from(formData));
+      if(product.mayoristaPrice) {  
+
+      }
+      const response = await fetch(`${API_BASE_URL}/products/${id}`, {
         method: 'PATCH',
-        body: formData,
+        body: formData
       });
 
       if (!response.ok) {
@@ -153,12 +167,21 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
 
               <div className="space-y-2">
                 <Label htmlFor="categoriaName">Categoría</Label>
-                <Input
-                  id="categoriaName"
-                  value={product.categoriaName}
-                  onChange={(e) => setProduct({ ...product, categoriaName: e.target.value })}
-                  required
-                />
+                <Select
+                          value={product.categoriaName}
+                          onValueChange={(value: string) => setProduct({ ...product, categoriaName: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecciona una categoría" />
+                          </SelectTrigger>
+                          <SelectContent>
+                                                         {categories.map((cat) => (
+                               <SelectItem key={cat.id} value={cat.id}>
+                                 {cat.nombre}
+                               </SelectItem>
+                             ))}
+                          </SelectContent>
+                        </Select>
               </div>
 
               <div className="space-y-2">
@@ -177,6 +200,38 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
                     <SelectItem value="Detal">Detal</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="gender">Género</Label>
+                <Select
+                  value={product.gender}
+                  onValueChange={(value: "All" | "Hombre" | "Mujer" | "Niños" | "Parejas") => 
+                    setProduct({ ...product, gender: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">Todos</SelectItem>
+                    <SelectItem value="Hombre">Hombre</SelectItem>
+                    <SelectItem value="Mujer">Mujer</SelectItem>
+                    <SelectItem value="Niños">Niños</SelectItem>
+                    <SelectItem value="Parejas">Parejas</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="mayoristaPrice">Precio Mayorista</Label>
+                <Input
+                  id="mayoristaPrice"
+                  type="number"
+                  step="0.01"
+                  value={product.mayoristaPrice || ''}
+                  onChange={(e) => setProduct({ ...product, mayoristaPrice: parseFloat(e.target.value) || 0 })}
+                />
               </div>
             </div>
 
@@ -212,20 +267,119 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="isActive"
-                checked={product.isActive}
-                onChange={(e) => setProduct({ ...product, isActive: e.target.checked })}
-                className="rounded"
-              />
-              <Label htmlFor="isActive">Producto activo</Label>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="isActive"
+                  checked={product.isActive}
+                  onChange={(e) => setProduct({ ...product, isActive: e.target.checked })}
+                  className="rounded"
+                />
+                <Label htmlFor="isActive">Producto activo</Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="mayorista"
+                  checked={product.mayorista}
+                  onChange={(e) => setProduct({ ...product, mayorista: e.target.checked })}
+                  className="rounded"
+                />
+                <Label htmlFor="mayorista">Producto mayorista</Label>
+              </div>
             </div>
 
             {error && (
               <div className="text-red-500 text-sm">{error}</div>
             )}
+
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-medium mb-4">Acciones rápidas</h3>
+              <div className="flex flex-wrap gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={async () => {
+                    try {
+                      const response = await fetch(`${API_BASE_URL}/products/${id}/wholesale`, {
+                        method: 'PATCH',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          mayorista: true,
+                          mayoristaPrice: product.mayoristaPrice 
+                        }),
+                      });
+                      if (response.ok) {
+                        setProduct({ ...product, mayorista: true, mayoristaPrice: product.mayoristaPrice || product.precio * 0.8 });
+                        alert('Producto actualizado a mayorista');
+                      }
+                    } catch (err) {
+                      alert('Error al actualizar a mayorista');
+                    }
+                  }}
+                >
+                  Marcar como mayorista
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={async () => {
+                    try {
+                      const response = await fetch(`${API_BASE_URL}/products/${id}/wholesale`, {
+                        method: 'PATCH',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          mayorista: false,
+                          mayoristaPrice: 0,
+                        }),
+                      });
+                      if (response.ok) {
+                        setProduct({ ...product, mayorista: false, mayoristaPrice: 0 });
+                        alert('Producto removido de mayorista');
+                      }
+                    } catch (err) {
+                      alert('Error al remover de mayorista');
+                    }
+                  }}
+                >
+                  Remover de mayorista
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={async () => {
+                    const newPrice = prompt('Ingrese el nuevo precio general:', product.precio.toString());
+                    if (newPrice && !isNaN(parseFloat(newPrice))) {
+                      try {
+                        const response = await fetch(`${API_BASE_URL}/products/${id}/general-price`, {
+                          method: 'PATCH',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            precio: parseFloat(newPrice),
+                          }),
+                        });
+                        if (response.ok) {
+                          setProduct({ ...product, precio: parseFloat(newPrice) });
+                          alert('Precio general actualizado');
+                        }
+                      } catch (err) {
+                        alert('Error al actualizar precio general');
+                      }
+                    }
+                  }}
+                >
+                  Actualizar precio general
+                </Button>
+              </div>
+            </div>
 
             <div className="flex justify-end space-x-4">
               <Link href="/products">

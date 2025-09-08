@@ -22,6 +22,9 @@ model Product {
   imagen    String
   productType MayoristaOrDetal
   categoriaName String
+  mayorista Boolean @default(false)
+  mayoristaPrice Float @default(0)
+  gender Gender @default(Hombre)
   categoria  Categoria @relation(fields: [categoriaName], references: [id])
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
@@ -49,6 +52,20 @@ model Promotion {
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Mayorista {
+  id        String   @id @default(uuid())
+  product   String
+  price     Float
+}
+
+enum Gender {
+  All
+  Hombre
+  Mujer
+  Niños
+  Parejas
 }
 
 enum MayoristaOrDetal {

@@ -123,7 +123,21 @@ const AppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
   
-    
+        <SidebarGroup>
+          <SidebarGroupLabel>Promociones</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/promotions">
+                    <List />
+                    Promociones
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>

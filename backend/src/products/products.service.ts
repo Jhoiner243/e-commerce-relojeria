@@ -2,7 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CloudinaryService } from '../common/services/cloudinary.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductResponseDto } from './dto/product-response.dto';
+import { UpdateGeneralPriceDto } from './dto/update-general-price.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { UpdateWholesaleDto } from './dto/update-wholesale.dto';
 import { ProductsRepository } from './repository/products.repository';
 
 @Injectable()
@@ -35,6 +37,7 @@ export class ProductsService {
     // Crear el producto con la URL de la imagen
     const productData = {
       nombre: createProductDto.nombre,
+      gender: createProductDto.gender,
       descripcion: createProductDto.descripcion,
       precio: createProductDto.precio,
       imagen: imagenUrl,
@@ -62,8 +65,47 @@ export class ProductsService {
     return this.productsRepository.findAllWithInactive();
   }
 
-  async findAllPaginated(take: number, cursor?: string) {
-    return this.productsRepository.findAllPaginated(take, cursor);
+  async findAllPaginated(
+    take: number,
+    cursor?: string,
+    gender?: string,
+    minPrice?: number,
+    maxPrice?: number,
+    category?: string,
+  ) {
+    return this.productsRepository.findAllPaginated(
+      take,
+      cursor,
+      gender,
+      minPrice,
+      maxPrice,
+      category,
+    );
+  }
+
+  async findAllPaginatedMayorista(
+    take: number,
+    cursor?: string,
+    gender?: string,
+    minPrice?: number,
+    maxPrice?: number,
+    category?: string,
+  ) {
+    return this.productsRepository.findAllPaginatedMayorista(
+      take,
+      cursor,
+      gender,
+      minPrice,
+      maxPrice,
+      category,
+    );
+  }
+
+  findSearch(q: string) {
+    if (!q || q.trim() === '') {
+      return;
+    }
+    return this.productsRepository.findSeacrh(q);
   }
 
   findAllFiltered(params: { visibility: 'detal' | 'mayorista' | 'client' }) {
@@ -84,7 +126,7 @@ export class ProductsService {
   }
 
   update(id: string, updateProductDto: UpdateProductDto) {
-    return this.productsRepository.update(`${id}`, updateProductDto);
+    return this.productsRepository.update(id, updateProductDto);
   }
 
   softDelete(id: string) {
@@ -96,6 +138,17 @@ export class ProductsService {
   }
 
   remove(id: string) {
-    return this.productsRepository.findOne(`${id}`);
+    return this.productsRepository.hardDelete(id);
+  }
+
+  updateWholesale(id: string, updateWholesaleDto: UpdateWholesaleDto) {
+    return this.productsRepository.updateWholesale(id, updateWholesaleDto);
+  }
+
+  updateGeneralPrice(id: string, updateGeneralPriceDto: UpdateGeneralPriceDto) {
+    return this.productsRepository.updateGeneralPrice(
+      id,
+      updateGeneralPriceDto,
+    );
   }
 }

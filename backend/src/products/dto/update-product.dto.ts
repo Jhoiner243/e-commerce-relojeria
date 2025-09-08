@@ -1,4 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { ProductEntity } from '../entities/product.entity';
 
-export class UpdateProductDto extends PartialType(ProductEntity) {}
+export class UpdateProductDto extends PartialType(ProductEntity) {
+  isActive?: boolean;
+  mayorista?: boolean;
+  mayoristaPrice?: number;
+}

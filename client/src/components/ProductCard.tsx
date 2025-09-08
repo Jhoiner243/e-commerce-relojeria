@@ -4,58 +4,67 @@ import useCartStore from "@/stores/cartStore";
 import { ProductType } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { formatCurrency } from "../utils/format-currency";
 import WhatsAppButton from "./WhatsAppButton";
 
 const ProductCard = ({ product }: { product: ProductType }) => {
-
-
   const { addToCart } = useCartStore();
+  const [isHovered, setIsHovered] = useState(false);
+  
   const handleAddToCart = () => {
     addToCart({
       ...product,
       quantity: 1,
-   
     });
-    toast.success("Producto agregado al carrito")
+    toast.success("Producto agregado al carrito");
   };
 
   return (
-    <div className="overflow-hidden">
-  
-      {/* IMAGE */}
-      <Link href={`/products/${product.id}`}>
-        <div className="relative aspect-[2/3] " >
+    <div
+      className="group transition-all duration-300 overflow-hidden hover:border-primary/30 max-w-sm mx-auto flex flex-col"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* IMAGE SECTION */}
+      <Link href={`/products/${product.id}`} className="block">
+        <div className="relative aspect-[2.4/3] overflow-hidden bg-muted/30">
           <Image
-            width={500}
-            height={700}
-            src={product.imagen.replace("/upload/", "/upload/w_500,h_700,c_fill/")}
-            alt={product.nombre}
-            className="object-cover hover:scale-105 transition-all duration-300 rounded-md"
+            width={400}
+            height={500}
+            src={product.imagen || "/placeholder.svg?height=400&width=400&query=modern product image"}
+            alt={product.nombre || "Producto"}
+            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out"
           />
         </div>
       </Link>
-      {/* PRODUCT DETAIL */}
-      <div className="flex flex-col gap-4">
-        <div >
-        <h1 className="font-medium">{product.nombre}</h1>
-          <p className="text-gray-500">
-            { product.descripcion.slice(0, 50) }
+
+      {/* CONTENT SECTION */}
+      <div className="p-2 flex flex-col flex-grow flex-1">
+        {/* Nombre y descripción */}
+        <div className="space-y-2">
+          <h3 className="font-semibold text-xl text-foreground transition-colors duration-300">
+            {product.nombre}
+          </h3>
+          <p className="text-muted-foreground text-sm line-clamp-2 leading-relaxed min-h-[3rem]">
+            {product.descripcion}
           </p>
         </div>
-        {/* PRICE AND ADD TO CART BUTTON */}
-          <p className="font-medium">{ formatCurrency(product.precio)}</p>
-        <div className=" w-full">
+
+        {/* Precio */}
+        <div className="mt-2">
+          <p className="font-semibold">{formatCurrency(product.precio)}</p>
+        </div>
+
+        {/* BOTÓN al final */}
+        <div className=" pt-2">
           <WhatsAppButton
             phone="573001112233"
             productName={product.nombre}
             reference={product.reference}
-            className=" justify-center transition-all duration-300 flex items-center gap-2 border-1"
+            className="w-full border text-primary-foreground p-2 font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 hover:bg-blue-600 hover:text-white"
           />
-   
-           
-          
         </div>
       </div>
     </div>

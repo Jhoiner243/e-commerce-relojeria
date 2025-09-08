@@ -25,11 +25,20 @@ export type Product = {
   imagen: string;
   isActive: boolean;
   productType: string;
+  mayorista: boolean;
+  mayoristaPrice: number;
   createdAt: string;
   updatedAt: string;
 };
 
-export const columns: ColumnDef<Product>[] = [
+interface ColumnsProps {
+  onSoftDelete: (id: string) => void;
+  onRestore: (id: string) => void;
+  onDelete: (id: string) => void;
+  onToggleWholesale: (id: string, isWholesale: boolean) => void;
+}
+
+export const createColumns = ({ onSoftDelete, onRestore, onDelete, onToggleWholesale }: ColumnsProps): ColumnDef<Product>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -116,6 +125,25 @@ export const columns: ColumnDef<Product>[] = [
     },
   },
   {
+    accessorKey: "mayorista",
+    header: "Mayorista",
+    cell: ({ row }) => {
+      const product = row.original;
+      return (
+        <div className="flex flex-col">
+          <Badge variant={product.mayorista ? "default" : "outline"}>
+            {product.mayorista ? "Sí" : "No"}
+          </Badge>
+          {product.mayorista && product.mayoristaPrice > 0 && (
+            <span className="text-xs text-gray-500 mt-1">
+              ${product.mayoristaPrice.toFixed(2)}
+            </span>
+          )}
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "isActive",
     header: "Estado",
     cell: ({ row }) => {
@@ -148,12 +176,7 @@ export const columns: ColumnDef<Product>[] = [
               Copiar ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Link href={`/products/${product.id}`} className="flex items-center">
-                <Eye className="mr-2 h-4 w-4" />
-                Ver producto
-              </Link>
-            </DropdownMenuItem>
+
             <DropdownMenuItem>
               <Link href={`/products/${product.id}/edit`} className="flex items-center">
                 <Edit className="mr-2 h-4 w-4" />
@@ -161,18 +184,34 @@ export const columns: ColumnDef<Product>[] = [
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
+            <DropdownMenuItem 
+              onClick={() => onToggleWholesale(product.id, !product.mayorista)}
+              className={product.mayorista ? "text-orange-600" : "text-green-600"}
+            >
+              {product.mayorista ? "Remover de Mayorista" : "Marcar como Mayorista"}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             {product.isActive ? (
-              <DropdownMenuItem className="text-orange-600">
+              <DropdownMenuItem 
+                className="text-orange-600"
+                onClick={() => onSoftDelete(product.id)}
+              >
                 <EyeOff className="mr-2 h-4 w-4" />
                 Desactivar
               </DropdownMenuItem>
             ) : (
-              <DropdownMenuItem className="text-green-600">
+              <DropdownMenuItem 
+                className="text-green-600"
+                onClick={() => onRestore(product.id)}
+              >
                 <Eye className="mr-2 h-4 w-4" />
                 Activar
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem className="text-red-600">
+            <DropdownMenuItem 
+              className="text-red-600"
+              onClick={() => onDelete(product.id)}
+            >
               <Trash2 className="mr-2 h-4 w-4" />
               Eliminar permanentemente
             </DropdownMenuItem>

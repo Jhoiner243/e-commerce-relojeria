@@ -9,6 +9,8 @@ import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { gender } from "../../../enum/gender";
+import { useCategories } from "../../../hooks/useCategories";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003/api";
 
@@ -18,17 +20,20 @@ interface ProductForm {
   precio: number;
   categoriaName: string;
   productType: "Mayorista" | "Detal";
+  gender: "All" | "Hombre" | "Mujer" | "Niños" | "Parejas";
   isActive: boolean;
 }
 
 export default function NewProductPage() {
   const router = useRouter();
+  const {categories} = useCategories()
   const [formData, setFormData] = useState<ProductForm>({
     nombre: "",
     descripcion: "",
     precio: 0,
     categoriaName: "",
     productType: "Detal",
+    gender: "All",
     isActive: true,
   });
   const [saving, setSaving] = useState(false);
@@ -60,6 +65,7 @@ export default function NewProductPage() {
       formDataToSend.append('precio', formData.precio.toString());
       formDataToSend.append('categoriaName', formData.categoriaName);
       formDataToSend.append('productType', formData.productType);
+      formDataToSend.append('gender', formData.gender);
       formDataToSend.append('isActive', formData.isActive.toString());
 
       if (imageFile) {
@@ -113,7 +119,7 @@ export default function NewProductPage() {
                 <Label htmlFor="precio">Precio</Label>
                 <Input
                   id="precio"
-                  type="number"
+                  type="text"
                   step="0.01"
                   value={formData.precio}
                   onChange={(e) => setFormData({ ...formData, precio: parseFloat(e.target.value) })}
@@ -123,12 +129,21 @@ export default function NewProductPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="categoriaName">Categoría</Label>
-                <Input
-                  id="categoriaName"
-                  value={formData.categoriaName}
-                  onChange={(e) => setFormData({ ...formData, categoriaName: e.target.value })}
-                  required
-                />
+                <Select
+                          value={formData.categoriaName}
+                          onValueChange={(value: string) => setFormData({ ...formData, categoriaName: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecciona una categoría" />
+                          </SelectTrigger>
+                          <SelectContent>
+                                                         {categories.map((cat) => (
+                               <SelectItem key={cat.id} value={cat.id}>
+                                 {cat.nombre}
+                               </SelectItem>
+                             ))}
+                          </SelectContent>
+                        </Select>
               </div>
 
               <div className="space-y-2">
@@ -145,6 +160,27 @@ export default function NewProductPage() {
                   <SelectContent>
                     <SelectItem value="Mayorista">Mayorista</SelectItem>
                     <SelectItem value="Detal">Detal</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="gender">Género</Label>
+                <Select
+                  value={formData.gender}
+                  onValueChange={(value: gender) => 
+                    setFormData({ ...formData, gender: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">Todos</SelectItem>
+                    <SelectItem value="Hombre">Hombre</SelectItem>
+                    <SelectItem value="Mujer">Mujer</SelectItem>
+                    <SelectItem value="Niños">Niños</SelectItem>
+                    <SelectItem value="Parejas">Parejas</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -206,7 +242,7 @@ export default function NewProductPage() {
               </Link>
               <Button type="submit" disabled={saving}>
                 <Save className="mr-2 h-4 w-4" />
-                {saving ? 'Guardando...' : 'Crear Producto'}
+                {saving ? 'Guardando...' : 'Crear producto'}
               </Button>
             </div>
           </form>

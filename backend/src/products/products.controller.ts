@@ -28,6 +28,8 @@ export class ProductsController {
     @Body() createProductDto: CreateProductDto,
     @UploadedFile() imagen: Express.Multer.File,
   ) {
+    console.log('createProductDto', createProductDto);
+
     // Combinar el DTO con el archivo subido
     const productData: CreateProductDto = {
       ...createProductDto,

@@ -43,6 +43,8 @@ export class ProductsService {
       imagen: imagenUrl,
       categoriaName: createProductDto.categoriaName,
       productType: createProductDto.productType,
+      mayoristaPrice: createProductDto.mayoristaPrice ?? 0,
+      mayorista: createProductDto.mayorista ?? false,
     };
 
     const product = await this.productsRepository.create(productData);

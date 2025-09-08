@@ -4,12 +4,13 @@ export type Gender = "men" | "women" | "kids" | "couples";
 
 export type ProductType = {
   id: string;
-  name: string;
-  price: number;
-  description: string;
+  nombre: string;
+  precio: number;
+  imagen: string;
   categoriaName: string;
-  images: string;
-  gender: Gender;
+  productType: "Mayorista" | "Detal";
+  descripcion: string;
+  gender?: Gender;
   reference?: string;
 };
 

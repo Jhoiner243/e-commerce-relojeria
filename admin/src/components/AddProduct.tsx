@@ -17,6 +17,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useProducts } from "../hooks/useProducts";
+import { formSchema, productTypes } from "./schemas/form-product";
 import { Button } from "./ui/button";
 import {
   Form,
@@ -32,15 +34,8 @@ import { ScrollArea } from "./ui/scroll-area";
 
 type Categoria = { id: string; nombre: string };
 
-const productTypes = ["Mayorista", "Detal"] as const;
 
-const formSchema = z.object({
-  nombre: z.string().min(1, { message: "Nombre requerido" }),
-  precio: z.coerce.number().min(1, { message: "Precio requerido" }),
-  categoriaName: z.string().min(1, { message: "Categoria requerida" }),
-  productType: z.enum(productTypes),
-  imagen: z.instanceof(File, { message: "Imagen requerida" }),
-});
+
 
 type AddProductProps = {
   onCreated?: () => void;
@@ -48,11 +43,13 @@ type AddProductProps = {
 };
 
 const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
+  const {refreshProducts} = useProducts()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       nombre: "",
-      precio: 0,
+      descripcion: "",
+      precio: "",
       categoriaName: "",
       productType: undefined as unknown as (typeof productTypes)[number],
       imagen: undefined as unknown as File,
@@ -70,7 +67,8 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
       setLoadingCategorias(true);
       setCategoriasError("");
       try {
-        const res = await fetch("http://localhost:3003/api/categorias");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categorias`);
+        console.log("res", res)
         if (!res.ok) throw new Error("Error cargando categorías");
         const data = (await res.json()) as Categoria[];
         setCategorias(data);
@@ -88,24 +86,22 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
     setSubmitSuccess("");
     const formData = new FormData();
     formData.append("nombre", values.nombre);
+    formData.append("descripcion", values.descripcion);
     formData.append("precio", values.precio.toString());
     formData.append("categoriaName", values.categoriaName);
     formData.append("productType", values.productType);
     formData.append("imagen", values.imagen);
 
     try {
-      const res = await fetch("http://localhost:3003/api/products", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
         method: "POST",
         body: formData,
       });
       if (!res.ok) throw new Error("Error creando el producto");
       setSubmitSuccess("Producto creado correctamente");
       form.reset();
-      try {
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(new CustomEvent("products:refresh"));
-        }
-      } catch {}
+      refreshProducts()
+    
       if (onCreated) onCreated();
       if (onClose) onClose();
     } catch (e) {
@@ -146,6 +142,19 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
                       <FormMessage />
                     </FormItem>
                   )}
+                />
+                <FormField control={form.control} name="descripcion" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descripcion</FormLabel>
+                    <FormControl>
+                      <Input {...field} disabled={submitting} />
+                    </FormControl>
+                    <FormDescription>
+                      Descripcion del producto
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
                 />
                 <FormField
                   control={form.control}
@@ -229,6 +238,8 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
                   control={form.control}
                   name="imagen"
                   render={({ field: { onChange, ...field } }) => (
+                    <div>
+
                     <FormItem>
                       <FormLabel>Imagen</FormLabel>
                       <FormControl>
@@ -243,8 +254,10 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
                         />
                       </FormControl>
                       <FormDescription>Sube una imagen del producto</FormDescription>
-                      <FormMessage />
                     </FormItem>
+                      <FormMessage />
+                    </div>
+
                   )}
                 />
                

@@ -5,10 +5,14 @@ CREATE TYPE "public"."MayoristaOrDetal" AS ENUM ('Mayorista', 'Detal');
 CREATE TABLE "public"."Product" (
     "id" TEXT NOT NULL,
     "nombre" TEXT NOT NULL,
+    "descripcion" TEXT NOT NULL,
     "precio" DOUBLE PRECISION NOT NULL,
     "imagen" TEXT NOT NULL,
     "productType" "public"."MayoristaOrDetal" NOT NULL,
     "categoriaName" TEXT NOT NULL,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
 );
@@ -29,6 +33,19 @@ CREATE TABLE "public"."Admin" (
     "password" TEXT NOT NULL,
 
     CONSTRAINT "Admin_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."Promotion" (
+    "id" TEXT NOT NULL,
+    "titulo" TEXT NOT NULL,
+    "descripcion" TEXT NOT NULL,
+    "imagen" TEXT NOT NULL,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Promotion_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex

@@ -1,6 +1,6 @@
 import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class CreatePromotionDto {
+export class CreatePromotionDtoRepository {
   @IsString()
   @IsNotEmpty()
   titulo: string;
@@ -11,7 +11,7 @@ export class CreatePromotionDto {
 
   @IsString()
   @IsNotEmpty()
-  imagen: Express.Multer.File;
+  imagen: string;
 
   @IsBoolean()
   @IsOptional()

@@ -1,5 +1,5 @@
 import ProductList from "@/components/ProductList";
-import CarruselPromotions from "../components/carrusel";
+import PromotionsCarousel from "@/components/PromotionsCarousel";
 
 const Homepage = async ({
   searchParams,
@@ -10,8 +10,7 @@ const Homepage = async ({
   return (
     <div className="">
       <div className="relative w-full mb-10">
-      <CarruselPromotions />
-
+        <PromotionsCarousel />
       </div>
       <ProductList category={category} params="homepage"/>
     </div>

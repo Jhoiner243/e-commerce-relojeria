@@ -1,23 +1,23 @@
 "use client";
 
 import {
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
 } from "@/components/ui/sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "./ui/button";
 import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
 
@@ -41,7 +41,7 @@ const AddCategory = () => {
   return (
     <SheetContent>
       <SheetHeader>
-        <SheetTitle className="mb-4">Add Category</SheetTitle>
+        <SheetTitle className="mb-4">Agregar categoría</SheetTitle>
         <SheetDescription asChild>
           <Form {...form}>
             <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>

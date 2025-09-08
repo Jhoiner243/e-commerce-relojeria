@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import {
   ColumnDef,
   flexRender,
@@ -10,6 +9,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
+import { DataTablePagination } from "@/components/TablePagination";
 import {
   Table,
   TableBody,
@@ -18,9 +18,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DataTablePagination } from "@/components/TablePagination";
-import { useState } from "react";
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

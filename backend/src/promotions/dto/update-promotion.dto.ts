@@ -1,4 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreatePromotionDto } from './create-promotion.dto';
+import { CreatePromotionDtoRepository } from './create-promotion-repository.dto';
 
-export class UpdatePromotionDto extends PartialType(CreatePromotionDto) {}
+export class UpdatePromotionDto extends PartialType(
+  CreatePromotionDtoRepository,
+) {}

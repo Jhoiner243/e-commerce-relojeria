@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/ErrorBoundary";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import type { Metadata } from "next";
@@ -32,7 +33,9 @@ export default function RootLayout({
       >
         <div className="mx-auto p-4 ">
           <Navbar />
-          {children}
+          <ErrorBoundary>
+            {children}
+          </ErrorBoundary>
           <Footer />
         </div>
         <ToastContainer position="bottom-right" />

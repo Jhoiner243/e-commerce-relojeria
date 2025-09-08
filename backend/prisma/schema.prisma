@@ -17,11 +17,15 @@ datasource db {
 model Product {
   id        String   @id  @default(uuid())  
   nombre    String
+  descripcion String
   precio    Float
   imagen    String
   productType MayoristaOrDetal
   categoriaName String
-  categoria  Categoria @relation(fields: [categoriaName], references: [id]) 
+  categoria  Categoria @relation(fields: [categoriaName], references: [id])
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Categoria {
@@ -35,6 +39,16 @@ model Admin {
   nombre    String
   email     String   @unique
   password  String
+}
+
+model Promotion {
+  id          String   @id @default(uuid())
+  titulo      String
+  descripcion String
+  imagen      String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 enum MayoristaOrDetal {

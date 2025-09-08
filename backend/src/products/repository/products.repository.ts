@@ -13,8 +13,8 @@ export class ProductsRepository {
     selectFields?: { hidePrice?: boolean; hideDetails?: boolean },
   ) {
     const where: Prisma.ProductWhereInput | undefined = filter?.productType
-      ? { productType: filter.productType }
-      : undefined;
+      ? { productType: filter.productType, isActive: true }
+      : { isActive: true };
     const select: Prisma.ProductSelect | undefined = selectFields
       ? {
           id: true,
@@ -28,10 +28,62 @@ export class ProductsRepository {
     return await this.prisma.product.findMany({ where, select });
   }
 
+  async findAllPaginated(take: number, cursor?: string) {
+    const cursorCondition = cursor ? { id: cursor } : undefined;
+
+    const products = await this.prisma.product.findMany({
+      take: take + 1,
+      cursor: cursorCondition,
+      where: { isActive: true },
+      orderBy: {
+        id: 'asc',
+      },
+      include: {
+        categoria: true,
+      },
+    });
+
+    let nextCursor: string | undefined = undefined;
+    const items = products.slice(0, take);
+
+    if (products.length > take) {
+      nextCursor = products[take - 1].id;
+    }
+
+    return {
+      items: items.map((product) => ({
+        id: product.id,
+        nombre: product.nombre,
+        descripcion: product.descripcion,
+        precio: product.precio,
+        imagen: product.imagen,
+        categoriaName: product.categoriaName,
+        productType: product.productType,
+        gender: undefined, // Not in schema yet
+        reference: product.id, // Using id as reference for now
+      })),
+      nextCursor,
+    };
+  }
+
+  async findAllWithInactive() {
+    return await this.prisma.product.findMany({
+      include: {
+        categoria: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
   async findOne(id: string) {
     return await this.prisma.product.findUnique({
       where: {
         id,
+      },
+      include: {
+        categoria: true,
       },
     });
   }
@@ -39,6 +91,9 @@ export class ProductsRepository {
   async create(createProductDto: ProductEntity) {
     return await this.prisma.product.create({
       data: createProductDto,
+      include: {
+        categoria: true,
+      },
     });
   }
 
@@ -48,6 +103,33 @@ export class ProductsRepository {
         id,
       },
       data: updateProductDto,
+      include: {
+        categoria: true,
+      },
+    });
+  }
+
+  async softDelete(id: string) {
+    return await this.prisma.product.update({
+      where: {
+        id,
+      },
+      data: { isActive: false },
+      include: {
+        categoria: true,
+      },
+    });
+  }
+
+  async restore(id: string) {
+    return await this.prisma.product.update({
+      where: {
+        id,
+      },
+      data: { isActive: true },
+      include: {
+        categoria: true,
+      },
     });
   }
 }

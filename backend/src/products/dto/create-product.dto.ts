@@ -6,6 +6,9 @@ export class CreateProductDto {
   @IsString()
   nombre: string;
 
+  @IsString()
+  descripcion: string;
+
   @IsNumber()
   @Type(() => Number)
   @Transform(({ value }) => Number(value))

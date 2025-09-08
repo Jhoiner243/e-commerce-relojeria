@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'www.midowatches.com'
+        hostname: 'res.cloudinary.com'
       },
     ],
   }

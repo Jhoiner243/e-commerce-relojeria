@@ -1,9 +1,9 @@
-export class PromotionsEntity {
+export class Promotion {
   id: string;
-  type: 'promotion' | 'collection' | 'featured';
-  title: string;
-  subtitle: string;
-  description: string;
-  buttonText: string;
-  image: string;
+  titulo: string;
+  descripcion: string;
+  imagen: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }

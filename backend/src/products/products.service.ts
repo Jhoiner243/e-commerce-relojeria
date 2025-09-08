@@ -35,6 +35,7 @@ export class ProductsService {
     // Crear el producto con la URL de la imagen
     const productData = {
       nombre: createProductDto.nombre,
+      descripcion: createProductDto.descripcion,
       precio: createProductDto.precio,
       imagen: imagenUrl,
       categoriaName: createProductDto.categoriaName,
@@ -57,6 +58,14 @@ export class ProductsService {
     return this.productsRepository.findAll();
   }
 
+  findAllWithInactive() {
+    return this.productsRepository.findAllWithInactive();
+  }
+
+  async findAllPaginated(take: number, cursor?: string) {
+    return this.productsRepository.findAllPaginated(take, cursor);
+  }
+
   findAllFiltered(params: { visibility: 'detal' | 'mayorista' | 'client' }) {
     if (params.visibility === 'client') {
       return this.productsRepository.findAll(undefined, {
@@ -70,12 +79,20 @@ export class ProductsService {
     return this.productsRepository.findAll({ productType: 'Detal' });
   }
 
-  findOne(id: number) {
-    return this.productsRepository.findOne(`${id}`);
+  findOne(id: string) {
+    return this.productsRepository.findOne(id);
   }
 
   update(id: string, updateProductDto: UpdateProductDto) {
     return this.productsRepository.update(`${id}`, updateProductDto);
+  }
+
+  softDelete(id: string) {
+    return this.productsRepository.softDelete(id);
+  }
+
+  restore(id: string) {
+    return this.productsRepository.restore(id);
   }
 
   remove(id: string) {

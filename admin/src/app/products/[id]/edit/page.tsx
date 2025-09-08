@@ -1,17 +1,25 @@
-"use client"
+"use client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Save } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCategories } from "../../../../hooks/useCategories";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003/api";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003/api";
 
 interface Product {
   id: string;
@@ -27,8 +35,11 @@ interface Product {
   mayoristaPrice: number;
 }
 
-export default function EditProductPage({ params }: { params: { id: string } }) {
-
+export default function EditProductPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const router = useRouter();
   const { id } = params;
   const [product, setProduct] = useState<Product | null>(null);
@@ -37,27 +48,29 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
   const [error, setError] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
-  const {categories} = useCategories()
+  const { categories } = useCategories();
 
   useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/products/${id}`);
+        if (!response.ok) {
+          throw new Error("Producto no encontrado");
+        }
+        const data = await response.json();
+        setProduct(data);
+        setImagePreview(data.imagen);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Error al cargar el producto"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchProduct();
   }, [id]);
-
-  const fetchProduct = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/products/${id}`);
-      if (!response.ok) {
-        throw new Error('Producto no encontrado');
-      }
-      const data = await response.json();
-      setProduct(data);
-      setImagePreview(data.imagen);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al cargar el producto');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -80,49 +93,47 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
 
     try {
       const formData = new FormData();
-      formData.append('nombre', product.nombre);
-      formData.append('descripcion', product.descripcion);
-      formData.append('precio', product.precio.toString());
-      formData.append('categoriaName', product.categoriaName);
-      formData.append('productType', product.productType);
-      formData.append('gender', product.gender);
-      formData.append('isActive', product.isActive.toString());
-      formData.append('mayorista', product.mayorista.toString());
-      formData.append('mayoristaPrice', product.mayoristaPrice.toString());
+      formData.append("nombre", product.nombre);
+      formData.append("descripcion", product.descripcion);
+      formData.append("precio", product.precio.toString());
+      formData.append("categoriaName", product.categoriaName);
+      formData.append("productType", product.productType);
+      formData.append("gender", product.gender);
+      formData.append("isActive", product.isActive.toString());
+      formData.append("mayorista", product.mayorista.toString());
+      formData.append("mayoristaPrice", product.mayoristaPrice.toString());
 
       if (imageFile) {
-        formData.append('imagen', imageFile);
+        formData.append("imagen", imageFile);
       }
 
-      console.log(Array.from(formData));
-      if(product.mayoristaPrice) {  
-
-      }
       const response = await fetch(`${API_BASE_URL}/products/${id}`, {
-        method: 'PATCH',
-        body: formData
+        method: "PATCH",
+        body: formData,
       });
 
       if (!response.ok) {
-        throw new Error('Error al actualizar el producto');
+        throw new Error("Error al actualizar el producto");
       }
 
-      router.push('/products');
+      router.push("/products");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al guardar');
+      setError(err instanceof Error ? err.message : "Error al guardar");
     } finally {
       setSaving(false);
     }
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center h-64">Cargando...</div>;
+    return (
+      <div className="flex justify-center items-center h-64">Cargando...</div>
+    );
   }
 
   if (error || !product) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-red-500">{error || 'Producto no encontrado'}</div>
+        <div className="text-red-500">{error || "Producto no encontrado"}</div>
       </div>
     );
   }
@@ -130,7 +141,10 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
   return (
     <div className="container mx-auto py-6">
       <div className="mb-6">
-        <Link href="/products" className="flex items-center text-gray-600 hover:text-gray-900">
+        <Link
+          href="/products"
+          className="flex items-center text-gray-600 hover:text-gray-900"
+        >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Volver a productos
         </Link>
@@ -148,7 +162,9 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
                 <Input
                   id="nombre"
                   value={product.nombre}
-                  onChange={(e) => setProduct({ ...product, nombre: e.target.value })}
+                  onChange={(e) =>
+                    setProduct({ ...product, nombre: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -160,7 +176,12 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
                   type="number"
                   step="0.01"
                   value={product.precio}
-                  onChange={(e) => setProduct({ ...product, precio: parseFloat(e.target.value) })}
+                  onChange={(e) =>
+                    setProduct({
+                      ...product,
+                      precio: parseFloat(e.target.value),
+                    })
+                  }
                   required
                 />
               </div>
@@ -168,27 +189,29 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
               <div className="space-y-2">
                 <Label htmlFor="categoriaName">Categoría</Label>
                 <Select
-                          value={product.categoriaName}
-                          onValueChange={(value: string) => setProduct({ ...product, categoriaName: value })}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecciona una categoría" />
-                          </SelectTrigger>
-                          <SelectContent>
-                                                         {categories.map((cat) => (
-                               <SelectItem key={cat.id} value={cat.id}>
-                                 {cat.nombre}
-                               </SelectItem>
-                             ))}
-                          </SelectContent>
-                        </Select>
+                  value={product.categoriaName}
+                  onValueChange={(value: string) =>
+                    setProduct({ ...product, categoriaName: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona una categoría" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {cat.nombre}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="productType">Tipo de Producto</Label>
                 <Select
                   value={product.productType}
-                  onValueChange={(value: "Mayorista" | "Detal") => 
+                  onValueChange={(value: "Mayorista" | "Detal") =>
                     setProduct({ ...product, productType: value })
                   }
                 >
@@ -206,9 +229,9 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
                 <Label htmlFor="gender">Género</Label>
                 <Select
                   value={product.gender}
-                  onValueChange={(value: "All" | "Hombre" | "Mujer" | "Niños" | "Parejas") => 
-                    setProduct({ ...product, gender: value })
-                  }
+                  onValueChange={(
+                    value: "All" | "Hombre" | "Mujer" | "Niños" | "Parejas"
+                  ) => setProduct({ ...product, gender: value })}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -229,8 +252,13 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
                   id="mayoristaPrice"
                   type="number"
                   step="0.01"
-                  value={product.mayoristaPrice || ''}
-                  onChange={(e) => setProduct({ ...product, mayoristaPrice: parseFloat(e.target.value) || 0 })}
+                  value={product.mayoristaPrice || ""}
+                  onChange={(e) =>
+                    setProduct({
+                      ...product,
+                      mayoristaPrice: parseFloat(e.target.value) || 0,
+                    })
+                  }
                 />
               </div>
             </div>
@@ -240,7 +268,9 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
               <Textarea
                 id="descripcion"
                 value={product.descripcion}
-                onChange={(e) => setProduct({ ...product, descripcion: e.target.value })}
+                onChange={(e) =>
+                  setProduct({ ...product, descripcion: e.target.value })
+                }
                 rows={4}
                 required
               />
@@ -257,7 +287,9 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
                 />
                 {imagePreview && (
                   <div className="w-20 h-20 relative rounded-md overflow-hidden">
-                    <img
+                    <Image
+                      height={60}
+                      width={60}
                       src={imagePreview}
                       alt="Preview"
                       className="w-full h-full object-cover"
@@ -273,7 +305,9 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
                   type="checkbox"
                   id="isActive"
                   checked={product.isActive}
-                  onChange={(e) => setProduct({ ...product, isActive: e.target.checked })}
+                  onChange={(e) =>
+                    setProduct({ ...product, isActive: e.target.checked })
+                  }
                   className="rounded"
                 />
                 <Label htmlFor="isActive">Producto activo</Label>
@@ -284,16 +318,16 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
                   type="checkbox"
                   id="mayorista"
                   checked={product.mayorista}
-                  onChange={(e) => setProduct({ ...product, mayorista: e.target.checked })}
+                  onChange={(e) =>
+                    setProduct({ ...product, mayorista: e.target.checked })
+                  }
                   className="rounded"
                 />
                 <Label htmlFor="mayorista">Producto mayorista</Label>
               </div>
             </div>
 
-            {error && (
-              <div className="text-red-500 text-sm">{error}</div>
-            )}
+            {error && <div className="text-red-500 text-sm">{error}</div>}
 
             <div className="border-t pt-6">
               <h3 className="text-lg font-medium mb-4">Acciones rápidas</h3>
@@ -303,22 +337,30 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
                   variant="outline"
                   onClick={async () => {
                     try {
-                      const response = await fetch(`${API_BASE_URL}/products/${id}/wholesale`, {
-                        method: 'PATCH',
-                        headers: {
-                          'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                          mayorista: true,
-                          mayoristaPrice: product.mayoristaPrice 
-                        }),
-                      });
+                      const response = await fetch(
+                        `${API_BASE_URL}/products/${id}/wholesale`,
+                        {
+                          method: "PATCH",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            mayorista: true,
+                            mayoristaPrice: product.mayoristaPrice,
+                          }),
+                        }
+                      );
                       if (response.ok) {
-                        setProduct({ ...product, mayorista: true, mayoristaPrice: product.mayoristaPrice || product.precio * 0.8 });
-                        alert('Producto actualizado a mayorista');
+                        setProduct({
+                          ...product,
+                          mayorista: true,
+                          mayoristaPrice:
+                            product.mayoristaPrice || product.precio * 0.8,
+                        });
+                        alert("Producto actualizado a mayorista");
                       }
-                    } catch (err) {
-                      alert('Error al actualizar a mayorista');
+                    } catch {
+                      alert("Error al actualizar a mayorista");
                     }
                   }}
                 >
@@ -329,22 +371,25 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
                   variant="outline"
                   onClick={async () => {
                     try {
-                      const response = await fetch(`${API_BASE_URL}/products/${id}/wholesale`, {
-                        method: 'PATCH',
-                        headers: {
-                          'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                          mayorista: false,
-                          mayoristaPrice: 0,
-                        }),
-                      });
+                      const response = await fetch(
+                        `${API_BASE_URL}/products/${id}/wholesale`,
+                        {
+                          method: "PATCH",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            mayorista: false,
+                            mayoristaPrice: 0,
+                          }),
+                        }
+                      );
                       if (response.ok) {
                         setProduct({ ...product, mayorista: false, mayoristaPrice: 0 });
-                        alert('Producto removido de mayorista');
+                        alert("Producto removido de mayorista");
                       }
-                    } catch (err) {
-                      alert('Error al remover de mayorista');
+                    } catch {
+                      alert("Error al remover de mayorista");
                     }
                   }}
                 >
@@ -354,24 +399,30 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
                   type="button"
                   variant="outline"
                   onClick={async () => {
-                    const newPrice = prompt('Ingrese el nuevo precio general:', product.precio.toString());
+                    const newPrice = prompt(
+                      "Ingrese el nuevo precio general:",
+                      product.precio.toString()
+                    );
                     if (newPrice && !isNaN(parseFloat(newPrice))) {
                       try {
-                        const response = await fetch(`${API_BASE_URL}/products/${id}/general-price`, {
-                          method: 'PATCH',
-                          headers: {
-                            'Content-Type': 'application/json',
-                          },
-                          body: JSON.stringify({
-                            precio: parseFloat(newPrice),
-                          }),
-                        });
+                        const response = await fetch(
+                          `${API_BASE_URL}/products/${id}/general-price`,
+                          {
+                            method: "PATCH",
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                              precio: parseFloat(newPrice),
+                            }),
+                          }
+                        );
                         if (response.ok) {
                           setProduct({ ...product, precio: parseFloat(newPrice) });
-                          alert('Precio general actualizado');
+                          alert("Precio general actualizado");
                         }
-                      } catch (err) {
-                        alert('Error al actualizar precio general');
+                      } catch {
+                        alert("Error al actualizar precio general");
                       }
                     }
                   }}
@@ -389,7 +440,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
               </Link>
               <Button type="submit" disabled={saving}>
                 <Save className="mr-2 h-4 w-4" />
-                {saving ? 'Guardando...' : 'Guardar Cambios'}
+                {saving ? "Guardando..." : "Guardar Cambios"}
               </Button>
             </div>
           </form>

@@ -1,17 +1,17 @@
 "use client";
 
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import {
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
 } from "@/components/ui/sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
@@ -22,13 +22,13 @@ import { useProducts } from "../hooks/useProducts";
 import { formSchema, productTypes } from "./schemas/form-product";
 import { Button } from "./ui/button";
 import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { ScrollArea } from "./ui/scroll-area";
@@ -76,7 +76,7 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
         if (!res.ok) throw new Error("Error cargando categorías");
         const data = (await res.json()) as Categoria[];
         setCategorias(data);
-      } catch (e) {
+      } catch  {
         setCategoriasError("No se pudieron cargar las categorías");
       } finally {
         setLoadingCategorias(false);
@@ -111,7 +111,7 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
     
       if (onCreated) onCreated();
       if (onClose) onClose();
-    } catch (e) {
+    } catch {
       setSubmitError("No se pudo crear el producto");
     } finally {
       setSubmitting(false);
@@ -276,7 +276,7 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
                 <FormField
                   control={form.control}
                   name="imagen"
-                  render={({ field: { onChange, ...field } }) => (
+                  render={({ field: { onChange} }) => (
                     <div>
 
                     <FormItem>

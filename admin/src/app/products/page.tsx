@@ -107,7 +107,7 @@ const ProductsPage = () => {
       } else {
         alert('Error al actualizar el estado mayorista');
       }
-    } catch (err) {
+    } catch {
       alert('Error al actualizar el estado mayorista');
     }
   };

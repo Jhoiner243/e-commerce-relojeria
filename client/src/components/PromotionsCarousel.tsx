@@ -1,5 +1,6 @@
 "use client";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 interface Promotion {
@@ -84,7 +85,7 @@ export default function PromotionsCarousel() {
               index === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"
             }`}
           >
-            <img
+            <Image
               src={promotion.imagen}
               alt={promotion.titulo}
               className="object-cover w-full h-full"

@@ -1,7 +1,7 @@
 "use client"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@radix-ui/react-select'
-import { use, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from 'react-day-picker'
 import { Form, FormProvider, useForm } from 'react-hook-form'
 import { z } from "zod"
@@ -12,9 +12,9 @@ import { useCategories } from '../../../hooks/useCategories'
 import { useProducts } from '../../../hooks/useProducts'
 import { Product } from '../columns'
 
-function ProductPage({params}: {params: Promise<{ id: string }> }) {
-  const { id } = use(params)
-  const {categories, error, loading} = useCategories()
+function ProductPage({params}: {params: { id: string }}) {
+  const { id } = params
+  const {categories, loading} = useCategories()
   const [product, setProduct] = useState<Product | null>(null)
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string>("");
@@ -35,18 +35,16 @@ function ProductPage({params}: {params: Promise<{ id: string }> }) {
 
   useEffect(() => {
     (async () => {
-      const res = await fetch(`http://localhost:3003/api/products/${id}`)
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`)
       if(!res.ok) throw new Error("Error al cargar producto")
       const data = await res.json()
       setProduct(data)
     })()
   }, [id])
 
-  type values = Partial<Product>
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setSubmitting(true);
-    setSubmitError("");
     setSubmitSuccess("");
     const formData = new FormData();
     formData.append("nombre", values.nombre);
@@ -66,7 +64,7 @@ function ProductPage({params}: {params: Promise<{ id: string }> }) {
       form.reset();
       refreshProducts()
     
-    } catch (e) {
+    } catch {
       setSubmitError("No se pudo crear el producto");
     } finally {
       setSubmitting(false);
@@ -78,7 +76,9 @@ function ProductPage({params}: {params: Promise<{ id: string }> }) {
     <Form {...form}>
     <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
     
-    
+    {submitError && (      
+      <p className="text-sm text-red-600">{submitError}</p>
+    )}
       {submitSuccess && (
         <p className="text-sm text-green-600">{submitSuccess}</p>
       )}
@@ -192,7 +192,7 @@ function ProductPage({params}: {params: Promise<{ id: string }> }) {
       <FormField
         control={form.control}
         name="imagen"
-        render={({ field: { onChange, ...field } }) => (
+        render={({ field: { onChange } }) => (
           <div>
 
           <FormItem>

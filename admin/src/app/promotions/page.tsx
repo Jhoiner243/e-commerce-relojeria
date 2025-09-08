@@ -310,7 +310,7 @@ interface Promotion {
                   />
                   {imagePreview && (
                     <div className="w-20 h-20 relative rounded-md overflow-hidden">
-                      <img
+                      <Image
                         src={imagePreview}
                         alt="Preview"
                         className="w-full h-full object-cover"

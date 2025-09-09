@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { formatCurrency } from "../utils/format-currency";
-import WhatsAppButton from "./WhatsAppButton";
+import ProductWhatsAppButton from "./ProductWhatsAppButton";
 
 const ProductCard = ({ product }: { product: ProductType }) => {
   const { addToCart } = useCartStore();
@@ -57,16 +57,16 @@ const ProductCard = ({ product }: { product: ProductType }) => {
           <p className="font-semibold">{formatCurrency(product.precio)}</p>
         </div>
 
-        {/* BOTÓN al final */}
-        <div className=" pt-2">
-          <WhatsAppButton
-            phone="573001112233"
+        {/* BOTONES al final */}
+        
+          <ProductWhatsAppButton
+            imageUrl={product.imagen}  
+            phone="573147353497"
             productName={product.nombre}
             reference={product.reference}
-            className="w-full border text-primary-foreground p-2 font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 hover:bg-blue-600 hover:text-white"
+            className="w-full border text-primary-foreground p-2 font-semibold text-sm transition-all duration-200 hover:bg-blue-600 hover:text-white rounded-md"
           />
         </div>
-      </div>
     </div>
   );
 };

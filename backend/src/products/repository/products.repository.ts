@@ -238,6 +238,7 @@ export class ProductsRepository {
   }
 
   async create(createProductDto: ProductEntity) {
+    console.log(createProductDto);
     return await this.prisma.product.create({
       data: createProductDto,
       include: {

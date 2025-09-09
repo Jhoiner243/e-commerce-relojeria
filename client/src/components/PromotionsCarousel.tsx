@@ -86,6 +86,8 @@ export default function PromotionsCarousel() {
             }`}
           >
             <Image
+              width={1000}
+              height={1000}
               src={promotion.imagen}
               alt={promotion.titulo}
               className="object-cover w-full h-full"

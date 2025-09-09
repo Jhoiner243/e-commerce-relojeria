@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { formatCurrency } from "../utils/format-currency";
-import WhatsAppButton from "./WhatsAppButton";
+import ProductWhatsAppButton from "./ProductWhatsAppButton";
 
 const ProductCard = ({ product }: { product: ProductType }) => {
   const { addToCart } = useCartStore();
@@ -66,7 +66,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
 
         {/* BOTÓN al final */}
         <div className=" pt-2">
-          <WhatsAppButton
+          <ProductWhatsAppButton
             phone="573136715937"
             imageUrl={product.imagen}
             productName={product.nombre}

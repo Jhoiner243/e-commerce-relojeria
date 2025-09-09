@@ -3,8 +3,6 @@ import { ArrowLeft, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import useCartStore from "../../../stores/cartStore";
 import { ProductType } from "../../../types";
 import { formatCurrency } from "../../../utils/format-currency";
 
@@ -16,7 +14,6 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(true);
-  const { addToCart } = useCartStore();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -38,15 +35,15 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
     fetchProduct();
   }, [id]);
 
-  const handleAddToCart = () => {
-    if (product) {
-      addToCart({
-        ...product,
-        quantity: 1,
-      });
-      toast.success("Producto agregado al carrito");
-    }
-  };
+  // const handleAddToCart = () => {
+  //   if (product) {
+  //     addToCart({
+  //       ...product,
+  //       quantity: 1,
+  //     });
+  //     toast.success("Producto agregado al carrito");
+  //   }
+  // };
 
   if (loading) {
     return (

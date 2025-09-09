@@ -3,7 +3,7 @@
 import { Home, Menu, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import AnnouncementBanner from "./AnnouncementBanner";
 import Sections from "./sections";
 
@@ -67,7 +67,9 @@ const Navbar = () => {
 
       {/* Sections - Hidden on mobile, shown on desktop */}
       <div className="hidden md:block">
-        <Sections />
+        <Suspense fallback={<div className="flex justify-center items-center p-3 border-b border-t border-gray-200 mt-2 w-full"><div className="text-sm text-gray-500">Loading...</div></div>}>
+          <Sections />
+        </Suspense>
       </div>
 
       {/* Mobile Sections */}

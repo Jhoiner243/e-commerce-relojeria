@@ -3,7 +3,7 @@
 import useFilterStore from "@/stores/filterStore"
 
 const Filter = () => {
-  const { gender, minPrice, maxPrice, sortBy, setGender, setMinPrice, setMaxPrice, setSortBy } = useFilterStore()
+  const { minPrice, maxPrice, sortBy, setMinPrice, setMaxPrice, setSortBy } = useFilterStore()
 
   return (
     <div className="border-b border-gray-100 pb-6 mb-8 max-w-[500px] justify-items-end">
@@ -41,7 +41,7 @@ const Filter = () => {
             id="sort"
             className="w-full px-0 py-2 border-0 border-b border-gray-200 focus:border-gray-900 focus:ring-0 bg-transparent text-gray-900 text-sm"
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
+            onChange={(e) => setSortBy(e.target.value as "none" | "asc" | "desc")}
           >
             <option value="none">Relevancia</option>
             <option value="asc">Precio ↑</option>

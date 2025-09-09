@@ -16,7 +16,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { LoadingOverlay, LoadingSpinner } from "../../../../components/ui/loading-overlay";
+import Notification from "../../../../components/ui/notification";
 import { useCategories } from "../../../../hooks/useCategories";
+import { useProductOperations } from "../../../../hooks/useProductOperations";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003/api";
@@ -44,10 +47,24 @@ export default function EditProductPage({
   const { id } = params;
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
+
+  const { 
+    loading: saving, 
+    error: saveError, 
+    success: saveSuccess, 
+    clearMessages,
+    updateProduct 
+  } = useProductOperations({
+    onSuccess: () => {
+      router.push("/products");
+    },
+    onError: (error) => {
+      console.error('Error updating product:', error);
+    }
+  });
   const { categories } = useCategories();
 
   useEffect(() => {
@@ -88,52 +105,44 @@ export default function EditProductPage({
     e.preventDefault();
     if (!product) return;
 
-    setSaving(true);
-    setError(null);
+    clearMessages();
 
     try {
-      const formData = new FormData();
-      formData.append("nombre", product.nombre);
-      formData.append("descripcion", product.descripcion);
-      formData.append("precio", product.precio.toString());
-      formData.append("categoriaName", product.categoriaName);
-      formData.append("productType", product.productType);
-      formData.append("gender", product.gender);
-      formData.append("isActive", product.isActive.toString());
-      formData.append("mayorista", product.mayorista.toString());
-      formData.append("mayoristaPrice", product.mayoristaPrice.toString());
-
-      if (imageFile) {
-        formData.append("imagen", imageFile);
-      }
-
-      const response = await fetch(`${API_BASE_URL}/products/${id}`, {
-        method: "PATCH",
-        body: formData,
+      await updateProduct(id, {
+        nombre: product.nombre,
+        descripcion: product.descripcion,
+        precio: product.precio,
+        categoriaName: product.categoriaName,
+        productType: product.productType,
+        gender: product.gender,
+        isActive: product.isActive,
+        mayorista: product.mayorista,
+        mayoristaPrice: product.mayoristaPrice,
+        imagen: imageFile ?? '',
       });
-
-      if (!response.ok) {
-        throw new Error("Error al actualizar el producto");
-      }
-
-      router.push("/products");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al guardar");
-    } finally {
-      setSaving(false);
+      // Error is already handled by useProductOperations
+      console.error('Error in handleSubmit:', err);
     }
   };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">Cargando...</div>
+      <div className="flex justify-center items-center h-64">
+        <LoadingSpinner size="lg" message="Cargando producto..." />
+      </div>
     );
   }
 
   if (error || !product) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-red-500">{error || "Producto no encontrado"}</div>
+        <Notification
+          type="error"
+          title="Error"
+          message={error || "Producto no encontrado"}
+          showCloseButton={false}
+        />
       </div>
     );
   }
@@ -150,12 +159,35 @@ export default function EditProductPage({
         </Link>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Editar Producto</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Notificaciones */}
+      {saveError && (
+        <div className="mb-4">
+          <Notification
+            type="error"
+            title="Error al guardar"
+            message={saveError}
+            onClose={clearMessages}
+          />
+        </div>
+      )}
+      {saveSuccess && (
+        <div className="mb-4">
+          <Notification
+            type="success"
+            title="Éxito"
+            message={saveSuccess}
+            onClose={clearMessages}
+          />
+        </div>
+      )}
+
+      <LoadingOverlay isLoading={saving} message="Guardando cambios...">
+        <Card>
+          <CardHeader>
+            <CardTitle>Editar Producto</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="nombre">Nombre</Label>
@@ -446,6 +478,7 @@ export default function EditProductPage({
           </form>
         </CardContent>
       </Card>
+      </LoadingOverlay>
     </div>
   );
 }

@@ -13,7 +13,7 @@ interface ProductWhatsAppButtonProps {
 const ProductWhatsAppButton = ({ 
   phone, 
   productName, 
-  reference, 
+  // reference, 
   className = "" ,
   imageUrl,
 }: ProductWhatsAppButtonProps) => {

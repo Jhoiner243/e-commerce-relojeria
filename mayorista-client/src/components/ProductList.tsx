@@ -10,7 +10,6 @@ const ProductList = ({ category, params }: { category: string, params: "homepage
   const { sortBy, setGender } = useFilterStore();
   const { data, size, setSize, isValidating, error, isLoading } = useInfiniteProducts(20, category);
 
-  const products = data ? data.flatMap((page) => page.items) : [];
   const hasMore = data?.[data.length - 1]?.nextCursor;
 
   const loaderRef = useRef<HTMLDivElement | null>(null);
@@ -19,7 +18,7 @@ const ProductList = ({ category, params }: { category: string, params: "homepage
     if(params === "homepage") {
       setGender("All")
     }
-  }, [params])
+  }, [params, setGender])
 
   useEffect(() => {
     if (!loaderRef.current) return;
@@ -39,6 +38,9 @@ const ProductList = ({ category, params }: { category: string, params: "homepage
 
 // Aplicar solo la clasificación (el filtrado ahora se realiza en el backend)
   const sortedProducts = useMemo(() => {
+    if (!data) return [];
+    
+    const products = data.flatMap((page) => page.items);
     let sorted = [...products];
 
     // Apply sorting
@@ -49,7 +51,7 @@ const ProductList = ({ category, params }: { category: string, params: "homepage
     }
 
     return sorted;
-  }, [products, sortBy]);
+  }, [data, sortBy]);
 
   // Show loading spinner on initial load
   if (isLoading) {

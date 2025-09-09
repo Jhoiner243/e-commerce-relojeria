@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { Product } from '../app/products/columns';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003/api";
@@ -34,12 +35,17 @@ export const useProducts = () => {
         method: 'PATCH',
       });
       if (!response.ok) {
-        throw new Error('Error al desactivar producto');
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || 'Error al desactivar producto';
+        throw new Error(errorMessage);
       }
       await fetchProducts(); // Refresh the list
+      toast.success('Producto desactivado exitosamente');
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
+      const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
+      setError(errorMessage);
+      toast.error(errorMessage);
       return false;
     }
   };
@@ -50,12 +56,17 @@ export const useProducts = () => {
         method: 'PATCH',
       });
       if (!response.ok) {
-        throw new Error('Error al restaurar producto');
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || 'Error al restaurar producto';
+        throw new Error(errorMessage);
       }
       await fetchProducts(); // Refresh the list
+      toast.success('Producto restaurado exitosamente');
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
+      const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
+      setError(errorMessage);
+      toast.error(errorMessage);
       return false;
     }
   };
@@ -66,12 +77,17 @@ export const useProducts = () => {
         method: 'DELETE',
       });
       if (!response.ok) {
-        throw new Error('Error al eliminar producto');
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || 'Error al eliminar producto';
+        throw new Error(errorMessage);
       }
       await fetchProducts(); // Refresh the list
+      toast.success('Producto eliminado exitosamente');
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
+      const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
+      setError(errorMessage);
+      toast.error(errorMessage);
       return false;
     }
   };

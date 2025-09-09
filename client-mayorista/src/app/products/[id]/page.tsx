@@ -1,12 +1,11 @@
 "use client"
-import WhatsAppButton from "@/components/WhatsAppButton";
 import useCartStore from "@/stores/cartStore";
 import { ProductType } from "@/types";
-import { ArrowLeft, ShoppingCart, Star } from "lucide-react";
+import { ArrowLeft, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import ProductWhatsAppButton from "../../../components/ProductWhatsAppButton";
 import { formatCurrency } from "../../../utils/format-currency";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003/api";
@@ -39,15 +38,7 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
     fetchProduct();
   }, [id]);
 
-  const handleAddToCart = () => {
-    if (product) {
-      addToCart({
-        ...product,
-        quantity: 1,
-      });
-      toast.success("Producto agregado al carrito");
-    }
-  };
+
 
   if (loading) {
     return (
@@ -175,16 +166,11 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
 
               {/* Actions */}
               <div className="space-y-4 pt-4">
-                <button
-                  onClick={handleAddToCart}
-                  className="w-full bg-gray-900 hover:bg-gray-800 text-white py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 font-medium"
-                >
-                  <ShoppingCart className="w-5 h-5" />
-                  Agregar al carrito
-                </button>
+             
                 
-                <WhatsAppButton
+                <ProductWhatsAppButton
                   phone="573001112233"
+                  imageUrl={product.imagen}
                   productName={product.nombre}
                   reference={product.reference}
                   className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 font-medium"

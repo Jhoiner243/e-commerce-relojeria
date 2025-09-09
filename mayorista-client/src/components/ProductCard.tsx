@@ -1,28 +1,23 @@
 "use client";
 
-import useCartStore from "@/stores/cartStore";
 import { ProductType } from "@/types";
 import Image from "next/image";
-import { useState } from "react";
-import { toast } from "react-toastify";
 
 const ProductCard = ({ product }: { product: ProductType }) => {
-  const { addToCart } = useCartStore();
-  const [isHovered, setIsHovered] = useState(false);
+  // const { addToCart } = useCartStore();
+  // const [isHovered, setIsHovered] = useState(false);
   
-  const handleAddToCart = () => {
-    addToCart({
-      ...product,
-      quantity: 1,
-    });
-    toast.success("Producto agregado al carrito");
-  };
+  // const handleAddToCart = () => {
+  //   addToCart({
+  //     ...product,
+  //     quantity: 1,
+  //   });
+  //   toast.success("Producto agregado al carrito");
+  // };
 
   return (
     <div
       className="group transition-all duration-300 overflow-hidden hover:border-primary/30 max-w-sm mx-auto flex flex-col"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       {/* IMAGE SECTION */}
         <div className="relative aspect-[2.4/3] overflow-hidden bg-muted/30">

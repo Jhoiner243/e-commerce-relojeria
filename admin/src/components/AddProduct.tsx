@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { gender } from "../enum/gender";
+import { useProductOperations } from "../hooks/useProductOperations";
 import { useProducts } from "../hooks/useProducts";
 import { formSchema, productTypes } from "./schemas/form-product";
 import { Button } from "./ui/button";
@@ -31,6 +32,8 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
+import { LoadingOverlay } from "./ui/loading-overlay";
+import Notification from "./ui/notification";
 import { ScrollArea } from "./ui/scroll-area";
 
 type Categoria = { id: string; nombre: string };
@@ -62,9 +65,24 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [loadingCategorias, setLoadingCategorias] = useState<boolean>(false);
   const [categoriasError, setCategoriasError] = useState<string>("");
-  const [submitting, setSubmitting] = useState<boolean>(false);
-  const [submitError, setSubmitError] = useState<string>("");
-  const [submitSuccess, setSubmitSuccess] = useState<string>("");
+
+  const { 
+    loading: submitting, 
+    error: submitError, 
+    success: submitSuccess, 
+    clearMessages,
+    createProduct 
+  } = useProductOperations({
+    onSuccess: () => {
+      form.reset();
+      refreshProducts();
+      if (onCreated) onCreated();
+      if (onClose) onClose();
+    },
+    onError: (error) => {
+      console.error('Error creating product:', error);
+    }
+  });
 
   useEffect(() => {
     void (async () => {
@@ -85,55 +103,59 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
   }, []);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setSubmitting(true);
-    setSubmitError("");
-    setSubmitSuccess("");
-    const formData = new FormData();
-    formData.append("nombre", values.nombre);
-    formData.append("gender", values.gender);
-    formData.append("descripcion", values.descripcion);
-    formData.append("precio", values.precio.toString());
-    formData.append("categoriaName", values.categoriaName);
-    formData.append("productType", values.productType);
-    formData.append("imagen", values.imagen);
-    formData.append("mayorista", (values.mayorista || false).toString());
-    formData.append("mayoristaPrice", values.mayoristaPrice || "0");
-
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
-        method: "POST",
-        body: formData,
-      });
-      if (!res.ok) throw new Error("Error creando el producto");
-      setSubmitSuccess("Producto creado correctamente");
-      form.reset();
-      refreshProducts()
+    clearMessages();
     
-      if (onCreated) onCreated();
-      if (onClose) onClose();
-    } catch {
-      setSubmitError("No se pudo crear el producto");
-    } finally {
-      setSubmitting(false);
+    try {
+      await createProduct({
+        nombre: values.nombre,
+        descripcion: values.descripcion,
+        precio: Number(values.precio),
+        categoriaName: values.categoriaName,
+        productType: values.productType,
+        gender: values.gender,
+        imagen: values.imagen,
+        mayorista: values.mayorista,
+        mayoristaPrice: Number(values.mayoristaPrice),
+      });
+    } catch (error) {
+      // Error is already handled by useProductOperations
+      console.error('Error in onSubmit:', error);
     }
   }
   return (
     <SheetContent>
-      <ScrollArea className="h-screen">
-        <SheetHeader>
-          <SheetTitle className="mb-4">Agregar producto</SheetTitle>
-          <SheetDescription asChild>
-            <Form {...form}>
-              <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
-                {categoriasError && (
-                  <p className="text-sm text-red-600">{categoriasError}</p>
-                )}
-                {submitError && (
-                  <p className="text-sm text-red-600">{submitError}</p>
-                )}
-                {submitSuccess && (
-                  <p className="text-sm text-green-600">{submitSuccess}</p>
-                )}
+      <LoadingOverlay isLoading={submitting} message="Creando producto...">
+        <ScrollArea className="h-screen">
+          <SheetHeader>
+            <SheetTitle className="mb-4">Agregar producto</SheetTitle>
+            <SheetDescription asChild>
+              <Form {...form}>
+                <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
+                  {/* Notificaciones mejoradas */}
+                  {categoriasError && (
+                    <Notification
+                      type="error"
+                      title="Error de carga"
+                      message={categoriasError}
+                      onClose={() => setCategoriasError("")}
+                    />
+                  )}
+                  {submitError && (
+                    <Notification
+                      type="error"
+                      title="Error al crear producto"
+                      message={submitError}
+                      onClose={clearMessages}
+                    />
+                  )}
+                  {submitSuccess && (
+                    <Notification
+                      type="success"
+                      title="Éxito"
+                      message={submitSuccess}
+                      onClose={clearMessages}
+                    />
+                  )}
                 <FormField
                   control={form.control}
                   name="nombre"
@@ -350,6 +372,7 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
           </SheetDescription>
         </SheetHeader>
       </ScrollArea>
+      </LoadingOverlay>
     </SheetContent>
   );
 };

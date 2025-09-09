@@ -1,30 +1,16 @@
 "use client";
 
-import useCartStore from "@/stores/cartStore";
 import { ProductType } from "@/types";
 import { Minus, Plus } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { toast } from "react-toastify";
-import WhatsAppButton from "./WhatsAppButton";
+import ProductWhatsAppButton from "./ProductWhatsAppButton";
 
 const ProductInteraction = ({
   product,
 }: {
   product: ProductType;
 }) => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [quantity, setQuantity] = useState(1);
-
-  const { addToCart } = useCartStore();
-
-  const handleTypeChange = (type: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set(type, value);
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
-  };
 
   const handleQuantityChange = (type: "increment" | "decrement") => {
     if (type === "increment") {
@@ -36,13 +22,7 @@ const ProductInteraction = ({
     }
   };
 
-  const handleAddToCart = () => {
-    addToCart({
-      ...product,
-      quantity,
-    });
-    toast.success("Product added to cart")
-  };
+
   return (
     <div className="flex flex-col gap-4 mt-4">
 
@@ -68,7 +48,8 @@ const ProductInteraction = ({
       </div>
       {/* BUTTONS */}
 
-      <WhatsAppButton
+      <ProductWhatsAppButton
+        imageUrl={product.imagen}
         phone="573001112233"
         productName={product.nombre}
         reference={product.reference}

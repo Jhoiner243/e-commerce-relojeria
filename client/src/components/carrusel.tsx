@@ -45,13 +45,13 @@ export default function CarruselPromotions() {
     return () => clearInterval(timer)
   }, [])
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % carouselSlides.length)
-  }
+  // const nextSlide = () => {
+  //   setCurrentSlide((prev) => (prev + 1) % carouselSlides.length)
+  // }
 
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + carouselSlides.length) % carouselSlides.length)
-  }
+  // const prevSlide = () => {
+  //   setCurrentSlide((prev) => (prev - 1 + carouselSlides.length) % carouselSlides.length)
+  // }
 
   return (
     <div className="mx-auto sm:px-0 sm:max-w-6xl md:max-w-2xl lg:max-w-8xl xl:max-w-[80%] relative h-[350px] overflow-hidden  mb-6 mt-3">

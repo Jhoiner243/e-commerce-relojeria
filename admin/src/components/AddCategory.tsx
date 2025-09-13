@@ -49,7 +49,7 @@ const AddCategory = () => {
     form.reset();
     toast.success("Categoría creada correctamente");
 
-  } catch (err) {
+  } catch {
     toast.error("Error al crear categoría");
   } finally {
     setLoading(false);

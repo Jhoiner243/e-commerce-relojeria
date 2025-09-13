@@ -18,7 +18,7 @@ const ProductWhatsAppButton = ({
   imageUrl,
 }: ProductWhatsAppButtonProps) => {
   const handleWhatsAppClick = () => {
-    const message = `¡Hola! Me interesa el producto: ${productName}${imageUrl ? ` (Imagen: ${imageUrl}) ` : ''}`;  
+    const message = `¡Hola! Me interesa el producto: ${productName}${imageUrl ? `  ${imageUrl} ` : ''}`;  
     const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     
     window.open(whatsappUrl, "_blank");

@@ -65,7 +65,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
         {/* BOTÓN al final */}
         <div className=" pt-2">
           <ProductWhatsAppButton
-            phone="573136715937"
+            phone="573147353497"
             imageUrl={product.imagen}
             productName={product.nombre}
             reference={product.reference}

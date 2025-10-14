@@ -17,24 +17,12 @@ const Footer = () => {
       <div className="flex flex-col gap-4 text-sm text-gray-400 items-center md:items-start">
         <p className="text-sm text-amber-50">Links</p>
         <Link href="/">Homepage</Link>
-        <Link href="/">Contact</Link>
+        <Link href="https://wa.me/573147353497">Contact</Link>
         <Link href="/">Terms of Service</Link>
         <Link href="/">Privacy Policy</Link>
       </div>
-      <div className="flex flex-col gap-4 text-sm text-gray-400 items-center md:items-start">
-        <p className="text-sm text-amber-50">Links</p>
-        <Link href="/">All Products</Link>
-        <Link href="/">New Arrivals</Link>
-        <Link href="/">Best Sellers</Link>
-        <Link href="/">Sale</Link>
-      </div>
-      <div className="flex flex-col gap-4 text-sm text-gray-400 items-center md:items-start">
-        <p className="text-sm text-amber-50">Links</p>
-        <Link href="/">About</Link>
-        <Link href="/">Contact</Link>
-        <Link href="/">Blog</Link>
-        <Link href="/">Affiliate Program</Link>
-      </div>
+
+
     </div>
   );
 };

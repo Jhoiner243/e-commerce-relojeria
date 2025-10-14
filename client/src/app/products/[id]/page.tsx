@@ -1,11 +1,9 @@
 "use client"
-import useCartStore from "@/stores/cartStore";
 import { ProductType } from "@/types";
-import { ArrowLeft, ShoppingCart, Star } from "lucide-react";
+import { ArrowLeft, Eye, Star, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import ProductWhatsAppButton from "../../../components/ProductWhatsAppButton";
 import { formatCurrency } from "../../../utils/format-currency";
 
@@ -17,7 +15,8 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(true);
-  const { addToCart } = useCartStore();
+  const [isImageOpen, setIsImageOpen] = useState(false)
+  
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -38,16 +37,6 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
 
     fetchProduct();
   }, [id]);
-
-  const handleAddToCart = () => {
-    if (product) {
-      addToCart({
-        ...product,
-        quantity: 1,
-      });
-      toast.success("Producto agregado al carrito");
-    }
-  };
 
   if (loading) {
     return (
@@ -108,7 +97,11 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
                   </div>
                 )}
                 <Image
-                  src={product.imagen || "/fallback.jpg"}
+                  src={product.imagen.replace(
+                    "/upload/",
+                    "/upload/q_auto,f_auto,e_improve/"
+
+                  ) || "/fallback.jpg"}
                   alt={product.nombre}
                   fill
                   className={`object-cover transition-opacity duration-300 ${
@@ -117,6 +110,18 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
                   onLoad={() => setImageLoading(false)}
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
+
+<button
+            aria-label="Ver imagen grande"
+            className="absolute top-2 right-2 z-10 inline-flex items-center justify-center rounded-full bg-black/10 text-white p-2  group-hover:opacity-100 transition-opacity duration-300 "
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsImageOpen(true);
+            }}
+          >
+            <Eye className="h-5 w-5" />
+          </button>
               </div>
               
 
@@ -142,9 +147,6 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
               <div className="border-b border-gray-200 pb-4">
                 <p className="text-4xl font-bold text-gray-900">
                   {product.precio ? formatCurrency(product.precio) : "N/A"}
-                </p>
-                <p className="text-sm text-gray-500 mt-1">
-                  Precio incluye IVA
                 </p>
               </div>
 
@@ -175,23 +177,48 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
 
               {/* Actions */}
               <div className="space-y-4 pt-4">
-                <button
-                  onClick={handleAddToCart}
-                  className="w-full bg-gray-900 hover:bg-gray-800 text-white py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 font-medium"
-                >
-                  <ShoppingCart className="w-5 h-5" />
-                  Agregar al carrito
-                </button>
+   
                 
                 <ProductWhatsAppButton
-                  phone="573001112233"
+                  phone="573147353497"
                   imageUrl={product.imagen}
                   productName={product.nombre}
                   reference={product.reference}
                   className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 font-medium"
                 />
               </div>
-
+                {/* Fullscreen image modal */}
+      {isImageOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setIsImageOpen(false)}
+        >
+          <div
+            className="relative max-w-5xl w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              aria-label="Cerrar"
+              className="absolute -top-3 -right-3 md:top-0 md:right-0 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
+              onClick={() => setIsImageOpen(false)}
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <div className="relative w-full aspect-[4/7] md:aspect-[16/9] bg-black">
+              <Image
+                fill
+                priority
+                src={product.imagen.replace(
+                  "/upload/",
+                  "/upload/q_auto,f_auto,e_improve/"
+                ) || "/placeholder.svg?height=1000&width=1200&query=modern product image"}
+                alt={product.nombre || "Producto"}
+                className="object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      )}
  
             </div>
           </div>

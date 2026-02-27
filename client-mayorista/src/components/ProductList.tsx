@@ -17,14 +17,14 @@ const ProductList = ({ category, params }: { category: string, params: "homepage
   const loaderRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if(params === "homepage") {
+    if (params === "homepage") {
       setGender("All")
     }
   }, [params, setGender])
 
   useEffect(() => {
     if (!loaderRef.current) return;
-    
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMore && !isValidating) {
@@ -38,10 +38,10 @@ const ProductList = ({ category, params }: { category: string, params: "homepage
     return () => observer.disconnect();
   }, [hasMore, isValidating, size, setSize]);
 
-// Aplicar solo la clasificación (el filtrado ahora se realiza en el backend)
+  // Aplicar solo la clasificación (el filtrado ahora se realiza en el backend)
   const sortedProducts = useMemo(() => {
     if (!data) return [];
-    
+
     const products = data.flatMap((page) => page.items);
     let sorted = [...products];
 
@@ -59,9 +59,9 @@ const ProductList = ({ category, params }: { category: string, params: "homepage
   if (isLoading) {
     return (
       <div className="w-full mx-auto sm:px-0 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
-        { params === "homepage" ? null : (
+        {params === "homepage" ? null : (
           <div className="justify-items-end">
-          <Filter />
+            <Filter />
           </div>
         )
         }
@@ -75,9 +75,9 @@ const ProductList = ({ category, params }: { category: string, params: "homepage
   if (error) {
     return (
       <div className="w-full mx-auto sm:px-0 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
-        { params === "homepage" ? null : (
+        {params === "homepage" ? null : (
           <div className="justify-items-end">
-          <Filter />
+            <Filter />
           </div>
         )
         }
@@ -90,13 +90,13 @@ const ProductList = ({ category, params }: { category: string, params: "homepage
 
   return (
     <div className="w-full mx-auto sm:px-0 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
-        { params === "homepage" ? null : (
-          <div className="justify-items-end p-2">
+      {params === "homepage" ? null : (
+        <div className="justify-items-end p-2">
           <Filter />
-          </div>
-        )
-        }
-      
+        </div>
+      )
+      }
+
       {sortedProducts.length === 0 && !isValidating ? (
         <div className="flex justify-center items-center h-64">
           <div className="text-center">
@@ -109,14 +109,14 @@ const ProductList = ({ category, params }: { category: string, params: "homepage
       ) : (
         <>
           {/* Products Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8 mt-4">
             {sortedProducts.map((product) => (
               <div key={product.id} className="h-full">
                 <ProductCard product={product} />
               </div>
             ))}
           </div>
-          
+
           {/* Load More Indicator */}
           {hasMore && (
             <div ref={loaderRef} className="flex justify-center items-center py-8">

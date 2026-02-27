@@ -1,9 +1,10 @@
 "use client"
 import { ProductType } from "@/types";
-import { ArrowLeft, Eye, Star, X } from "lucide-react";
+import { ArrowLeft, Eye, RotateCcw, Star, X, ZoomIn, ZoomOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
+import React from "react";
 import ProductWhatsAppButton from "../../../components/ProductWhatsAppButton";
 import { formatCurrency } from "../../../utils/format-currency";
 
@@ -16,6 +17,10 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(true);
   const [isImageOpen, setIsImageOpen] = useState(false)
+  const [zoom, setZoom] = useState(1)
+  const [position, setPosition] = useState({ x: 0, y: 0 })
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   
 
   useEffect(() => {
@@ -37,6 +42,50 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
 
     fetchProduct();
   }, [id]);
+
+  const handleZoomIn = () => {
+    setZoom(prev => Math.min(prev * 1.5, 5))
+  }
+  
+  const handleZoomOut = () => {
+    setZoom(prev => Math.max(prev / 1.5, 0.5))
+  }
+  
+  const handleReset = () => {
+    setZoom(1)
+    setPosition({ x: 0, y: 0 })
+  }
+  
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (zoom > 1) {
+      setIsDragging(true)
+      setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y })
+    }
+  }
+  
+  const handleMouseMove = (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (isDragging && zoom > 1) {
+      setPosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      })
+    }
+  }
+  
+  const handleMouseUp = () => {
+    setIsDragging(false)
+  }
+  
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault()
+    if (e.deltaY < 0) {
+      handleZoomIn()
+    } else {
+      handleZoomOut()
+    }
+  }
 
   if (loading) {
     return (
@@ -197,14 +246,59 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
             className="relative max-w-5xl w-full"
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Close button */}
             <button
               aria-label="Cerrar"
               className="absolute -top-3 -right-3 md:top-0 md:right-0 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
-              onClick={() => setIsImageOpen(false)}
+              onClick={() => {
+                setIsImageOpen(false)
+                handleReset()
+              }}
             >
               <X className="h-5 w-5" />
             </button>
-            <div className="relative w-full aspect-[4/7] md:aspect-[16/9] bg-black">
+            
+            {/* Zoom controls */}
+            <div className="absolute top-4 left-4 z-10 flex gap-2">
+              <button
+                aria-label="Acercar"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
+                onClick={handleZoomIn}
+              >
+                <ZoomIn className="h-5 w-5" />
+              </button>
+              <button
+                aria-label="Alejar"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
+                onClick={handleZoomOut}
+              >
+                <ZoomOut className="h-5 w-5" />
+              </button>
+              <button
+                aria-label="Resetear"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
+                onClick={handleReset}
+              >
+                <RotateCcw className="h-5 w-5" />
+              </button>
+            </div>
+            
+            {/* Zoom level indicator */}
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
+              <div className="bg-white/90 text-black px-3 py-1 rounded-full text-sm font-medium">
+                {Math.round(zoom * 100)}%
+              </div>
+            </div>
+            
+            {/* Image container */}
+            <div 
+              className="relative w-full aspect-[4/7] md:aspect-[16/9] bg-black overflow-hidden cursor-grab active:cursor-grabbing"
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onWheel={handleWheel}
+            >
               <Image
                 fill
                 priority
@@ -213,7 +307,11 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
                   "/upload/q_auto,f_auto,e_improve/"
                 ) || "/placeholder.svg?height=1000&width=1200&query=modern product image"}
                 alt={product.nombre || "Producto"}
-                className="object-contain"
+                className="object-contain transition-transform duration-200"
+                style={{
+                  transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
+                  transformOrigin: 'center center'
+                }}
               />
             </div>
           </div>

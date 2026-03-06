@@ -3,112 +3,129 @@
 import { Home, Menu, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import AnnouncementBanner from "./AnnouncementBanner";
 import Sections from "./sections";
 
 const Navbar = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Cierra el menú si la pantalla crece a md o más
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const handler = (e: MediaQueryListEvent) => {
+      if (e.matches) setIsOpen(false);
+    };
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  // Bloquea scroll cuando menú abierto
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [isOpen]);
 
   return (
     <div>
       <AnnouncementBanner />
 
-      <nav className="w-full flex items-center justify-between pb-4 mx-auto sm:px-0 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl py-4">
-        {/* LEFT */}
-        <Link href="/" className="flex items-center">
-          <Image src="/logo.png" alt="guaca" width={36} height={36} />
-          <p className="hidden md:block text-md font-medium tracking-wider ml-2">
+      {/* Barra principal */}
+      <nav className="w-full flex items-center justify-between px-4 sm:px-6 md:px-8 mx-auto max-w-6xl py-3">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
+          <Image src="/logo.png" alt="La guaca del reloj" width={36} height={36} priority />
+          <span className="hidden sm:block text-sm font-semibold tracking-wide">
             La guaca del reloj
-          </p>
+          </span>
         </Link>
-        
-        {/* RIGHT - Desktop */}
+
+        {/* Desktop: iconos derechos */}
         <div className="hidden md:flex items-center gap-6">
-          <Link href="/">
-            <Home className="w-5 h-5 text-gray-600"/>
+          <Link href="/" aria-label="Inicio">
+            <Home className="w-5 h-5 text-gray-600 hover:text-gray-900 transition-colors" />
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
-        <div className="md:hidden flex items-center gap-4">
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 rounded-md hover:bg-gray-100 transition-colors"
-            aria-label="Toggle mobile menu"
-          >
-            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
+        {/* Mobile: botón hamburguesa */}
+        <button
+          onClick={() => setIsOpen((prev) => !prev)}
+          className="md:hidden p-2 rounded-md hover:bg-gray-100 transition-colors"
+          aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
+          aria-expanded={isOpen}
+        >
+          {isOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
       </nav>
 
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-b border-gray-200 shadow-lg">
-          <div className="px-4 py-2 space-y-2">
-            <Link 
-              href="/" 
-              className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <Home className="w-4 h-4 text-gray-600"/>
-              <span>Inicio</span>
-            </Link>
-            <Link 
-              href="/cart" 
-              className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-             
-            </Link>
-          </div>
-        </div>
-      )}
-
-      {/* Sections - Hidden on mobile, shown on desktop */}
+      {/* Secciones de categorías — desktop siempre visible */}
       <div className="hidden md:block">
-        <Suspense fallback={<div className="flex justify-center items-center p-3 border-b border-t border-gray-200 mt-2 w-full"><div className="text-sm text-gray-500">Loading...</div></div>}>
-          <Sections />
+        <Suspense fallback={
+          <div className="flex justify-center items-center p-3 border-b border-t border-gray-200 w-full">
+            <div className="text-sm text-gray-500">Cargando...</div>
+          </div>
+        }>
+          <Sections onLinkClick={() => setIsOpen(false)} />
         </Suspense>
       </div>
 
-      {/* Mobile Sections */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden bg-gray-50 border-b border-gray-200">
-          <div className="px-4 py-3">
-            <nav className="flex flex-col space-y-2">
-              <Link 
-                href="/products?gender=Hombre" 
-                className="p-2 rounded-md hover:bg-gray-100 transition-colors text-sm"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Hombres
-              </Link>
-              <Link 
-                href="/products?gender=Mujer" 
-                className="p-2 rounded-md hover:bg-gray-100 transition-colors text-sm"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Mujeres
-              </Link>
-              <Link 
-                href="/products?gender=Niños" 
-                className="p-2 rounded-md hover:bg-gray-100 transition-colors text-sm"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Niños
-              </Link>
-              <Link 
-                href="/products?gender=Parejas" 
-                className="p-2 rounded-md hover:bg-gray-100 transition-colors text-sm"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Parejas
-              </Link>
-            </nav>
-          </div>
-        </div>
+      {/* Overlay oscuro */}
+      {isOpen && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/40 z-40 backdrop-blur-sm"
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+        />
       )}
+
+      {/* Menú móvil deslizable */}
+      <div
+        className={`
+          md:hidden fixed top-0 left-0 h-full w-72 max-w-[85vw] bg-white z-50
+          shadow-2xl transform transition-transform duration-300 ease-in-out
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+        `}
+        aria-hidden={!isOpen}
+      >
+        {/* Cabecera del drawer */}
+        <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100">
+          <Link href="/" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
+            <Image src="/logo.png" alt="La guaca del reloj" width={28} height={28} />
+            <span className="text-sm font-semibold tracking-wide">La guaca del reloj</span>
+          </Link>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
+            aria-label="Cerrar menú"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Navegación principal */}
+        <nav className="px-3 py-4 space-y-1">
+          <Link
+            href="/"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+          >
+            <Home className="w-4 h-4 text-gray-500" />
+            Inicio
+          </Link>
+        </nav>
+
+        {/* Divisor */}
+        <div className="px-4 pb-2">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Categorías</p>
+        </div>
+
+        {/* Secciones (categorías) en móvil */}
+        <Suspense fallback={
+          <div className="px-4 py-2 text-sm text-gray-400">Cargando categorías...</div>
+        }>
+          <Sections onLinkClick={() => setIsOpen(false)} mobile />
+        </Suspense>
+      </div>
     </div>
   );
 };

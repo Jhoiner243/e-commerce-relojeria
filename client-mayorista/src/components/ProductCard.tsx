@@ -15,20 +15,20 @@ const ProductCard = ({ product }: { product: ProductType }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
-  
+
   const handleZoomIn = () => {
     setZoom(prev => Math.min(prev * 1.5, 5))
   }
-  
+
   const handleZoomOut = () => {
     setZoom(prev => Math.max(prev / 1.5, 0.5))
   }
-  
+
   const handleReset = () => {
     setZoom(1)
     setPosition({ x: 0, y: 0 })
   }
-  
+
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
     if (zoom > 1) {
@@ -36,7 +36,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
       setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y })
     }
   }
-  
+
   const handleMouseMove = (e: React.MouseEvent) => {
     e.preventDefault()
     if (isDragging && zoom > 1) {
@@ -46,11 +46,11 @@ const ProductCard = ({ product }: { product: ProductType }) => {
       })
     }
   }
-  
+
   const handleMouseUp = () => {
     setIsDragging(false)
   }
-  
+
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault()
     if (e.deltaY < 0) {
@@ -61,7 +61,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
   }
   // const { addToCart } = useCartStore();
   // const [isHovered, setIsHovered] = useState(false);
-  
+
   // const handleAddToCart = () => {
   //   addToCart({
   //     ...product,
@@ -116,111 +116,89 @@ const ProductCard = ({ product }: { product: ProductType }) => {
           </p>
         </div>
 
-              {/* Precio */}
-      <div className="mt-2">
-      {product.mayorista && product.mayoristaPrice && product.mayoristaPrice > 0 ? (
-        <div className="space-y-1">
-          <p className="font-semibold text-green-600">{formatCurrency(product.mayoristaPrice)}</p>
-
-        </div>
-      ) : (
-        <p className="font-semibold">{formatCurrency(product.mayoristaPrice || 0)}</p>
-      )}
-      </div>
-
-        {/* BOTONES al final */}
-        
-          <ProductWhatsAppButton
-            imageUrl={product.imagen}  
-            phone="573147353497"
-            productName={product.nombre}
-            reference={product.reference}
-            className="w-full border text-primary-foreground p-2 font-semibold text-sm transition-all duration-200 hover:bg-blue-600 hover:text-white rounded-md"
-          />
-        </div>
-      {/* Fullscreen image modal */}
-      {isImageOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
-          onClick={() => setIsImageOpen(false)}
-        >
+        {/* Fullscreen image modal */}
+        {isImageOpen && (
           <div
-            className="relative max-w-5xl w-full"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+            onClick={() => setIsImageOpen(false)}
           >
-            {/* Close button */}
-            <button
-              aria-label="Cerrar"
-              className="absolute -top-3 -right-3 md:top-0 md:right-0 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
-              onClick={() => {
-                setIsImageOpen(false)
-                handleReset()
-              }}
+            <div
+              className="relative max-w-5xl w-full"
+              onClick={(e) => e.stopPropagation()}
             >
-              <X className="h-5 w-5" />
-            </button>
-            
-            {/* Zoom controls */}
-            <div className="absolute top-4 left-4 z-10 flex gap-2">
+              {/* Close button */}
               <button
-                aria-label="Acercar"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
-                onClick={handleZoomIn}
+                aria-label="Cerrar"
+                className="absolute -top-3 -right-3 md:top-0 md:right-0 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
+                onClick={() => {
+                  setIsImageOpen(false)
+                  handleReset()
+                }}
               >
-                <ZoomIn className="h-5 w-5" />
+                <X className="h-5 w-5" />
               </button>
-              <button
-                aria-label="Alejar"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
-                onClick={handleZoomOut}
+
+              {/* Zoom controls */}
+              <div className="absolute top-4 left-4 z-10 flex gap-2">
+                <button
+                  aria-label="Acercar"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
+                  onClick={handleZoomIn}
+                >
+                  <ZoomIn className="h-5 w-5" />
+                </button>
+                <button
+                  aria-label="Alejar"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
+                  onClick={handleZoomOut}
+                >
+                  <ZoomOut className="h-5 w-5" />
+                </button>
+                <button
+                  aria-label="Resetear"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
+                  onClick={handleReset}
+                >
+                  <RotateCcw className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* Zoom level indicator */}
+              <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
+                <div className="bg-white/90 text-black px-3 py-1 rounded-full text-sm font-medium">
+                  {Math.round(zoom * 100)}%
+                </div>
+              </div>
+
+              {/* Image container */}
+              <div
+                className="relative w-full aspect-[4/7] md:aspect-[16/9] bg-black overflow-hidden cursor-grab active:cursor-grabbing"
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onWheel={handleWheel}
               >
-                <ZoomOut className="h-5 w-5" />
-              </button>
-              <button
-                aria-label="Resetear"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
-                onClick={handleReset}
-              >
-                <RotateCcw className="h-5 w-5" />
-              </button>
-            </div>
-            
-            {/* Zoom level indicator */}
-            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
-              <div className="bg-white/90 text-black px-3 py-1 rounded-full text-sm font-medium">
-                {Math.round(zoom * 100)}%
+                <Image
+                  fill
+                  priority
+                  src={product.imagen.replace(
+                    "/upload/",
+                    "/upload/q_auto,f_auto,e_improve/"
+                  ) || "/placeholder.svg?height=800&width=1200&query=modern product image"}
+                  alt={product.nombre || "Producto"}
+                  className="object-contain transition-transform duration-200"
+                  style={{
+                    transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
+                    transformOrigin: 'center center'
+                  }}
+                />
               </div>
             </div>
-            
-            {/* Image container */}
-            <div 
-              className="relative w-full aspect-[4/7] md:aspect-[16/9] bg-black overflow-hidden cursor-grab active:cursor-grabbing"
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-              onWheel={handleWheel}
-            >
-              <Image
-                fill
-                priority
-                src={product.imagen.replace(
-                  "/upload/",
-                  "/upload/q_auto,f_auto,e_improve/"
-                ) || "/placeholder.svg?height=800&width=1200&query=modern product image"}
-                alt={product.nombre || "Producto"}
-                className="object-contain transition-transform duration-200"
-                style={{
-                  transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
-                  transformOrigin: 'center center'
-                }}
-              />
-            </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
+        )}
+      </div>
+      );
 };
 
-export default ProductCard;
+      export default ProductCard;

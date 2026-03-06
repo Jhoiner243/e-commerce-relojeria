@@ -1,6 +1,6 @@
 "use client";
 
-
+import { Dialog, DialogContent, DialogTrigger } from "@radix-ui/react-dialog";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Edit, Eye, EyeOff, MoreHorizontal, Trash2 } from "lucide-react";
 import Image from "next/image";
@@ -9,6 +9,37 @@ import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Checkbox } from "../../components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../../components/ui/dropdown-menu";
+
+// Componente de miniatura con lightbox al hacer clic
+function ImageCell({ src, alt }: { src: string; alt: string }) {
+  if (!src) {
+    return (
+      <div className="w-12 h-12 rounded-md bg-gray-200 flex items-center justify-center">
+        <span className="text-xs text-gray-500">Sin imagen</span>
+      </div>
+    );
+  }
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <div className="w-12 h-12 relative rounded-md overflow-hidden cursor-zoom-in hover:ring-2 hover:ring-primary transition-all">
+          <Image alt={alt} src={src} fill className="object-cover" sizes="48px" />
+        </div>
+      </DialogTrigger>
+      <DialogContent className="flex items-center justify-center p-4 bg-transparent border-none shadow-none max-w-fit">
+        <div className="relative w-[min(90vw,600px)] h-[min(90vh,600px)]">
+          <Image
+            alt={alt}
+            src={src}
+            fill
+            className="object-contain rounded-lg"
+            sizes="(max-width: 600px) 90vw, 600px"
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export type Product = {
   id: string;
@@ -57,21 +88,7 @@ export const createColumns = ({ onSoftDelete, onRestore, onDelete, onToggleWhole
     cell: ({ row }) => {
       const product = row.original;
       return (
-        <div className="w-12 h-12 relative rounded-md overflow-hidden">
-          {product.imagen ? (
-            <Image
-              alt={product.nombre}
-              src={product.imagen}
-              fill
-              className="object-cover"
-              sizes="48px"
-            />
-          ) : (
-            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-              <span className="text-xs text-gray-500">Sin imagen</span>
-            </div>
-          )}
-        </div>
+        <ImageCell src={product.imagen} alt={product.nombre} />
       );
     },
   },
@@ -178,7 +195,7 @@ export const createColumns = ({ onSoftDelete, onRestore, onDelete, onToggleWhole
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
+            <DropdownMenuItem
               onClick={() => onToggleWholesale(product.id, !product.mayorista)}
               className={product.mayorista ? "text-orange-600" : "text-green-600"}
             >
@@ -186,7 +203,7 @@ export const createColumns = ({ onSoftDelete, onRestore, onDelete, onToggleWhole
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             {product.isActive ? (
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 className="text-orange-600"
                 onClick={() => onSoftDelete(product.id)}
               >
@@ -194,7 +211,7 @@ export const createColumns = ({ onSoftDelete, onRestore, onDelete, onToggleWhole
                 Desactivar
               </DropdownMenuItem>
             ) : (
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 className="text-green-600"
                 onClick={() => onRestore(product.id)}
               >
@@ -202,7 +219,7 @@ export const createColumns = ({ onSoftDelete, onRestore, onDelete, onToggleWhole
                 Activar
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem 
+            <DropdownMenuItem
               className="text-red-600"
               onClick={() => onDelete(product.id)}
             >

@@ -2,11 +2,12 @@
 
 import { ProductType } from "@/types";
 import Image from "next/image";
+import ProductWhatsAppButton from "./WhatsAppButton";
 
 const ProductCard = ({ product }: { product: ProductType }) => {
   // const { addToCart } = useCartStore();
   // const [isHovered, setIsHovered] = useState(false);
-  
+
   // const handleAddToCart = () => {
   //   addToCart({
   //     ...product,
@@ -20,15 +21,15 @@ const ProductCard = ({ product }: { product: ProductType }) => {
       className="group transition-all duration-300 overflow-hidden hover:border-primary/30 max-w-sm mx-auto flex flex-col"
     >
       {/* IMAGE SECTION */}
-        <div className="relative aspect-[2.4/3] overflow-hidden bg-muted/30">
-          <Image
-            width={400}
-            height={500}
-            src={product.imagen || "/placeholder.svg?height=400&width=400&query=modern product image"}
-            alt={product.nombre || "Producto"}
-            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out"
-          />
-        </div>
+      <div className="relative aspect-[2.4/3] overflow-hidden bg-muted/30">
+        <Image
+          width={400}
+          height={500}
+          src={product.imagen || "/placeholder.svg?height=400&width=400&query=modern product image"}
+          alt={product.nombre || "Producto"}
+          className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out"
+        />
+      </div>
 
       {/* CONTENT SECTION */}
       <div className="p-2 flex flex-col flex-grow flex-1">
@@ -42,10 +43,16 @@ const ProductCard = ({ product }: { product: ProductType }) => {
           </p>
         </div>
 
-        
+
 
         {/* BOTÓN al final */}
-       
+        <ProductWhatsAppButton
+          imageUrl={product.imagen}
+          phone="573147353497"
+          productName={product.nombre}
+          reference={product.reference}
+          className="w-full border text-primary-foreground p-2 font-semibold text-sm transition-all duration-200 hover:bg-blue-600 hover:text-white rounded-md"
+        />
       </div>
     </div>
   );

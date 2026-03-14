@@ -59,9 +59,15 @@ export default function Sections({ onLinkClick, mobile = false }: SectionsProps)
         {sections.map((section) => {
           const isActive = currentGender === section.slug;
           return (
-            <Link key={section.title} href={section.url} onClick={onLinkClick}>
+            <Link 
+              key={section.title} 
+              href={section.url} 
+              onClick={() => {
+                setGender(section.slug as GenderFilter);
+                onLinkClick?.();
+              }}
+            >
               <div
-                onClick={() => setGender(section.slug as GenderFilter)}
                 className={`flex items-center justify-center rounded-md transition-colors px-3 py-2 text-sm sm:text-base ${isActive
                     ? "bg-gray-200 font-semibold text-gray-900"
                     : "hover:bg-gray-100"

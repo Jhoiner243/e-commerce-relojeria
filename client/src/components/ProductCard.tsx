@@ -15,20 +15,20 @@ const ProductCard = ({ product }: { product: ProductType }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
-  
+
   const handleZoomIn = () => {
     setZoom(prev => Math.min(prev * 1.5, 5))
   }
-  
+
   const handleZoomOut = () => {
     setZoom(prev => Math.max(prev / 1.5, 0.5))
   }
-  
+
   const handleReset = () => {
     setZoom(1)
     setPosition({ x: 0, y: 0 })
   }
-  
+
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
     if (zoom > 1) {
@@ -36,7 +36,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
       setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y })
     }
   }
-  
+
   const handleMouseMove = (e: React.MouseEvent) => {
     e.preventDefault()
     if (isDragging && zoom > 1) {
@@ -46,11 +46,11 @@ const ProductCard = ({ product }: { product: ProductType }) => {
       })
     }
   }
-  
+
   const handleMouseUp = () => {
     setIsDragging(false)
   }
-  
+
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault()
     if (e.deltaY < 0) {
@@ -61,7 +61,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
   }
   // const { addToCart } = useCartStore();
   // const [isHovered, setIsHovered] = useState(false);
-  
+
   // const handleAddToCart = () => {
   //   addToCart({
   //     ...product,
@@ -122,15 +122,15 @@ const ProductCard = ({ product }: { product: ProductType }) => {
         </div>
 
         {/* BOTONES al final */}
-        
-          <ProductWhatsAppButton
-            imageUrl={product.imagen}  
-            phone="573147353497"
-            productName={product.nombre}
-            reference={product.reference}
-            className="w-full border text-primary-foreground p-2 font-semibold text-sm transition-all duration-200 hover:bg-blue-600 hover:text-white rounded-md"
-          />
-        </div>
+
+        <ProductWhatsAppButton
+          imageUrl={product.imagen}
+          phone="573147353497"
+          productName={product.nombre}
+          reference={product.reference}
+          className="w-full border text-primary-foreground p-2 font-semibold text-sm transition-all duration-200 hover:bg-blue-600 hover:text-white rounded-md"
+        />
+      </div>
       {/* Fullscreen image modal */}
       {isImageOpen && (
         <div
@@ -152,7 +152,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
             >
               <X className="h-5 w-5" />
             </button>
-            
+
             {/* Zoom controls */}
             <div className="absolute top-4 left-4 z-10 flex gap-2">
               <button
@@ -177,16 +177,16 @@ const ProductCard = ({ product }: { product: ProductType }) => {
                 <RotateCcw className="h-5 w-5" />
               </button>
             </div>
-            
+
             {/* Zoom level indicator */}
             <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
               <div className="bg-white/90 text-black px-3 py-1 rounded-full text-sm font-medium">
                 {Math.round(zoom * 100)}%
               </div>
             </div>
-            
+
             {/* Image container */}
-            <div 
+            <div
               className="relative w-full aspect-[4/7] md:aspect-[16/9] bg-black overflow-hidden cursor-grab active:cursor-grabbing"
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}

@@ -88,7 +88,6 @@ const ProductCard = ({ product }: { product: ProductType }) => {
             alt={product.nombre || "Producto"}
             className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out"
           />
-
           {/* Eye button overlay */}
           <button
             aria-label="Ver imagen grande"
@@ -197,8 +196,19 @@ const ProductCard = ({ product }: { product: ProductType }) => {
             </div>
           </div>
         )}
+
+        {/* Botón Comprar */}
+        <ProductWhatsAppButton
+          phone={process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "573147353497"}
+          imageUrl={product.imagen}
+          productName={product.nombre}
+          reference={product.reference}
+          className="w-full border text-primary-foreground p-2 font-semibold text-sm transition-all duration-200 hover:bg-blue-600 hover:text-white rounded-md mt-3"
+        />
       </div>
-      );
+    </div>
+
+  );
 };
 
-      export default ProductCard;
+export default ProductCard;

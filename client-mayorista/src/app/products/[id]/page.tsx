@@ -21,7 +21,7 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
-  
+
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -46,16 +46,16 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const handleZoomIn = () => {
     setZoom(prev => Math.min(prev * 1.5, 5))
   }
-  
+
   const handleZoomOut = () => {
     setZoom(prev => Math.max(prev / 1.5, 0.5))
   }
-  
+
   const handleReset = () => {
     setZoom(1)
     setPosition({ x: 0, y: 0 })
   }
-  
+
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
     if (zoom > 1) {
@@ -63,7 +63,7 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
       setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y })
     }
   }
-  
+
   const handleMouseMove = (e: React.MouseEvent) => {
     e.preventDefault()
     if (isDragging && zoom > 1) {
@@ -73,11 +73,11 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
       })
     }
   }
-  
+
   const handleMouseUp = () => {
     setIsDragging(false)
   }
-  
+
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault()
     if (e.deltaY < 0) {
@@ -126,8 +126,8 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
       <div className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <div className="mb-8">
-          <Link 
-            href="/products" 
+          <Link
+            href="/products"
             className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -136,7 +136,7 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
         </div>
 
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
+          <div className="griformatCurrency(product.mayoristaPrice)d grid-cols-1 lg:grid-cols-2 gap-8 p-8">
             {/* IMAGE SECTION */}
             <div className="space-y-4">
               <div className="relative aspect-[4/5] bg-gray-100 rounded-lg overflow-hidden">
@@ -153,26 +153,25 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
                   ) || "/fallback.jpg"}
                   alt={product.nombre}
                   fill
-                  className={`object-cover transition-opacity duration-300 ${
-                    imageLoading ? 'opacity-0' : 'opacity-100'
-                  }`}
+                  className={`object-cover transition-opacity duration-300 ${imageLoading ? 'opacity-0' : 'opacity-100'
+                    }`}
                   onLoad={() => setImageLoading(false)}
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
 
-<button
-            aria-label="Ver imagen grande"
-            className="absolute top-2 right-2 z-10 inline-flex items-center justify-center rounded-full bg-black/10 text-white p-2  group-hover:opacity-100 transition-opacity duration-300 "
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setIsImageOpen(true);
-            }}
-          >
-            <Eye className="h-5 w-5" />
-          </button>
+                <button
+                  aria-label="Ver imagen grande"
+                  className="absolute top-2 right-2 z-10 inline-flex items-center justify-center rounded-full bg-black/10 text-white p-2  group-hover:opacity-100 transition-opacity duration-300 "
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsImageOpen(true);
+                  }}
+                >
+                  <Eye className="h-5 w-5" />
+                </button>
               </div>
-              
+
 
             </div>
 
@@ -226,98 +225,98 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
 
               {/* Actions */}
               <div className="space-y-4 pt-4">
-   
-                
+
+
                 <ProductWhatsAppButton
                   phone="573147353497"
                   imageUrl={product.imagen}
                   productName={product.nombre}
                   reference={product.reference}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 font-medium"
+                  className="w-full border text-primary-foreground p-2 font-semibold transition-all duration-200 hover:bg-blue-600 hover:text-white rounded-md py-3 text-base flex items-center justify-center gap-2 mt-4"
                 />
               </div>
-                {/* Fullscreen image modal */}
-      {isImageOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
-          onClick={() => setIsImageOpen(false)}
-        >
-          <div
-            className="relative max-w-5xl w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close button */}
-            <button
-              aria-label="Cerrar"
-              className="absolute -top-3 -right-3 md:top-0 md:right-0 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
-              onClick={() => {
-                setIsImageOpen(false)
-                handleReset()
-              }}
-            >
-              <X className="h-5 w-5" />
-            </button>
-            
-            {/* Zoom controls */}
-            <div className="absolute top-4 left-4 z-10 flex gap-2">
-              <button
-                aria-label="Acercar"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
-                onClick={handleZoomIn}
-              >
-                <ZoomIn className="h-5 w-5" />
-              </button>
-              <button
-                aria-label="Alejar"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
-                onClick={handleZoomOut}
-              >
-                <ZoomOut className="h-5 w-5" />
-              </button>
-              <button
-                aria-label="Resetear"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
-                onClick={handleReset}
-              >
-                <RotateCcw className="h-5 w-5" />
-              </button>
-            </div>
-            
-            {/* Zoom level indicator */}
-            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
-              <div className="bg-white/90 text-black px-3 py-1 rounded-full text-sm font-medium">
-                {Math.round(zoom * 100)}%
-              </div>
-            </div>
-            
-            {/* Image container */}
-            <div 
-              className="relative w-full aspect-[4/7] md:aspect-[16/9] bg-black overflow-hidden cursor-grab active:cursor-grabbing"
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-              onWheel={handleWheel}
-            >
-              <Image
-                fill
-                priority
-                src={product.imagen.replace(
-                  "/upload/",
-                  "/upload/q_auto,f_auto,e_improve/"
-                ) || "/placeholder.svg?height=1000&width=1200&query=modern product image"}
-                alt={product.nombre || "Producto"}
-                className="object-contain transition-transform duration-200"
-                style={{
-                  transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
-                  transformOrigin: 'center center'
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
- 
+              {/* Fullscreen image modal */}
+              {isImageOpen && (
+                <div
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+                  onClick={() => setIsImageOpen(false)}
+                >
+                  <div
+                    className="relative max-w-5xl w-full"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {/* Close button */}
+                    <button
+                      aria-label="Cerrar"
+                      className="absolute -top-3 -right-3 md:top-0 md:right-0 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
+                      onClick={() => {
+                        setIsImageOpen(false)
+                        handleReset()
+                      }}
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+
+                    {/* Zoom controls */}
+                    <div className="absolute top-4 left-4 z-10 flex gap-2">
+                      <button
+                        aria-label="Acercar"
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
+                        onClick={handleZoomIn}
+                      >
+                        <ZoomIn className="h-5 w-5" />
+                      </button>
+                      <button
+                        aria-label="Alejar"
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
+                        onClick={handleZoomOut}
+                      >
+                        <ZoomOut className="h-5 w-5" />
+                      </button>
+                      <button
+                        aria-label="Resetear"
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
+                        onClick={handleReset}
+                      >
+                        <RotateCcw className="h-5 w-5" />
+                      </button>
+                    </div>
+
+                    {/* Zoom level indicator */}
+                    <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
+                      <div className="bg-white/90 text-black px-3 py-1 rounded-full text-sm font-medium">
+                        {Math.round(zoom * 100)}%
+                      </div>
+                    </div>
+
+                    {/* Image container */}
+                    <div
+                      className="relative w-full aspect-[4/7] md:aspect-[16/9] bg-black overflow-hidden cursor-grab active:cursor-grabbing"
+                      onMouseDown={handleMouseDown}
+                      onMouseMove={handleMouseMove}
+                      onMouseUp={handleMouseUp}
+                      onMouseLeave={handleMouseUp}
+                      onWheel={handleWheel}
+                    >
+                      <Image
+                        fill
+                        priority
+                        src={product.imagen.replace(
+                          "/upload/",
+                          "/upload/q_auto,f_auto,e_improve/"
+                        ) || "/placeholder.svg?height=1000&width=1200&query=modern product image"}
+                        alt={product.nombre || "Producto"}
+                        className="object-contain transition-transform duration-200"
+                        style={{
+                          transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
+                          transformOrigin: 'center center'
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
             </div>
           </div>
         </div>

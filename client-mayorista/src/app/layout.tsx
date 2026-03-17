@@ -2,6 +2,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import ClientProviders from "@/components/providers/ClientProviders";
+import { CartModalProvider } from "@/contexts/CartModalContext";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ToastContainer } from "react-toastify";
@@ -35,6 +36,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="mx-auto ">
+        <CartModalProvider>
           <Navbar />
           <ErrorBoundary>
             <ClientProviders>
@@ -43,6 +45,7 @@ export default function RootLayout({
           </ErrorBoundary>
           <Footer />
           <WhatsAppButton />
+        </CartModalProvider>
         </div>
         <ToastContainer 
           position="bottom-right"

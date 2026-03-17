@@ -16,7 +16,10 @@ const useCartStore = create<CartStoreStateType & CartStoreActionsType>()(
 
           if (existingIndex !== -1) {
             const updatedCart = [...state.cart];
-            updatedCart[existingIndex].quantity += product.quantity || 1;
+            const updatedItem = { ...updatedCart[existingIndex] };
+            const newQuantity = updatedItem.quantity + (product.quantity || 1);
+            updatedItem.quantity = Math.min(newQuantity, 99);
+            updatedCart[existingIndex] = updatedItem;
             return { cart: updatedCart };
           }
 
@@ -25,7 +28,7 @@ const useCartStore = create<CartStoreStateType & CartStoreActionsType>()(
               ...state.cart,
               {
                 ...product,
-                quantity: product.quantity || 1,
+                quantity: Math.min(product.quantity || 1, 99),
               },
             ],
           };
@@ -34,9 +37,13 @@ const useCartStore = create<CartStoreStateType & CartStoreActionsType>()(
         set((state) => ({
           cart: state.cart.filter(
             (p) =>
-              !(
-                p.id === product.id 
-              )
+              p.id !== product.id
+          ),
+        })),
+      updateQuantity: (id, newQuantity) =>
+        set((state) => ({
+          cart: state.cart.map((p) =>
+            p.id === id ? { ...p, quantity: Math.max(1, Math.min(newQuantity, 99)) } : p
           ),
         })),
       clearCart: () => set({ cart: [] }),

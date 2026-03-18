@@ -91,7 +91,10 @@ const ProductCard = ({ product }: { product: ProductType }) => {
             <Image
               width={400}
               height={500}
-              src={product.imagen || "/placeholder.svg?height=400&width=400&query=modern product image"}
+              src={product.imagen?.replace(
+                /\/upload\/(?:[a-zA-Z0-9_,-]+\/)?/,
+                "/upload/q_auto,f_auto,e_improve/"
+              ) || "/placeholder.svg?height=400&width=400&query=modern product image"}
               alt={product.nombre || "Producto"}
               className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out"
             />

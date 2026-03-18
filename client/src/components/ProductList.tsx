@@ -33,7 +33,7 @@ const ProductList = ({ category, params }: { category: string, params: "homepage
     if (!data) return [];
     
     const products = data.flatMap((page) => page.items);
-    let sorted = [...products];
+    const sorted = [...products];
 
     return sorted;
   }, [data]);

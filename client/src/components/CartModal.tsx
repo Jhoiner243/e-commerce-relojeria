@@ -12,7 +12,7 @@ interface CartModalProps {
 }
 
 const CartModal = ({ isOpen, onClose }: CartModalProps) => {
-  const { cart, hasHydrated, addToCart, removeFromCart, updateQuantity: updateQuantityStore, clearCart } = useCartStore();
+  const { cart, hasHydrated, removeFromCart, updateQuantity: updateQuantityStore, clearCart } = useCartStore();
   const [showModal, setShowModal] = useState(false);
   const [mount, setMount] = useState(false);
 
@@ -181,31 +181,46 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
                       <div className="flex items-center justify-between mt-2">
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={() => updateQuantity(item.id, -1)}
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              updateQuantity(item.id, -1);
+                            }}
                             className="w-7 h-7 flex items-center justify-center rounded-full bg-white border border-gray-200 hover:bg-gray-100 transition-colors"
                             aria-label={item.quantity === 1 ? "Eliminar producto" : "Disminuir cantidad"}
                           >
-                            {item.quantity === 1 ? <Minus className="w-3 h-3" /> : <Minus className="w-3 h-3" />}
+                            <Minus className="w-3 h-3 pointer-events-none" />
                           </button>
                           <span className="w-8 text-center text-sm font-medium">
                             {item.quantity}
                           </span>
                           <button
-                            onClick={() => item.quantity < 99 && updateQuantity(item.id, 1)}
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              if (item.quantity < 99) updateQuantity(item.id, 1);
+                            }}
                             className={`w-7 h-7 flex items-center justify-center rounded-full bg-white border transition-colors ${item.quantity >= 99 ? 'border-gray-100 bg-gray-50 text-gray-300 cursor-not-allowed' : 'border-gray-200 hover:bg-gray-100'}`}
                             aria-label="Aumentar cantidad"
                             disabled={item.quantity >= 99}
                           >
-                            <Plus className="w-3 h-3" />
+                            <Plus className="w-3 h-3 pointer-events-none" />
                           </button>
                         </div>
 
                         <button
-                          onClick={() => removeFromCart(item)}
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            removeFromCart(item);
+                          }}
                           className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
                           aria-label="Eliminar producto"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4 pointer-events-none" />
                         </button>
                       </div>
                     </div>

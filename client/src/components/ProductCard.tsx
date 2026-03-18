@@ -7,7 +7,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { formatCurrency } from "../utils/format-currency";
-import { useCartModal } from "@/contexts/CartModalContext";
 
 const ProductCard = ({ product }: { product: ProductType }) => {
   const [isImageOpen, setIsImageOpen] = useState(false)
@@ -15,11 +14,10 @@ const ProductCard = ({ product }: { product: ProductType }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
-  const [showAddedToast, setShowAddedToast] = useState(false)
   const [toastTimeout, setToastTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [showAddedToast, setShowAddedToast] = useState(false);
 
   const { addToCart } = useCartStore();
-  const { openCart } = useCartModal();
 
   const handleZoomIn = () => {
     setZoom(prev => Math.min(prev * 1.5, 5))

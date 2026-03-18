@@ -1,7 +1,6 @@
 "use client"
 import { ProductType } from "@/types";
 import { ArrowLeft, Eye, Star, X } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 import ProductWhatsAppButton from "../../../components/ProductWhatsAppButton";
@@ -16,7 +15,7 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(true);
   const [isImageOpen, setIsImageOpen] = useState(false)
-  
+
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -77,8 +76,8 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
       <div className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <div className="mb-8">
-          <Link 
-            href="/products" 
+          <Link
+            href="/products"
             className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -96,34 +95,32 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
                   </div>
                 )}
-                <Image
+                <img
                   src={product.imagen.replace(
                     "/upload/",
                     "/upload/q_auto,f_auto,e_improve/"
 
                   ) || "/fallback.jpg"}
                   alt={product.nombre}
-                  fill
-                  className={`object-cover transition-opacity duration-300 ${
-                    imageLoading ? 'opacity-0' : 'opacity-100'
-                  }`}
+                  className={`object-cover transition-opacity duration-300 ${imageLoading ? 'opacity-0' : 'opacity-100'
+                    }`}
                   onLoad={() => setImageLoading(false)}
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
 
-<button
-            aria-label="Ver imagen grande"
-            className="absolute top-2 right-2 z-10 inline-flex items-center justify-center rounded-full bg-black/10 text-white p-2  group-hover:opacity-100 transition-opacity duration-300 "
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setIsImageOpen(true);
-            }}
-          >
-            <Eye className="h-5 w-5" />
-          </button>
+                <button
+                  aria-label="Ver imagen grande"
+                  className="absolute top-2 right-2 z-10 inline-flex items-center justify-center rounded-full bg-black/10 text-white p-2  group-hover:opacity-100 transition-opacity duration-300 "
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsImageOpen(true);
+                  }}
+                >
+                  <Eye className="h-5 w-5" />
+                </button>
               </div>
-              
+
 
             </div>
 
@@ -177,8 +174,8 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
 
               {/* Actions */}
               <div className="space-y-4 pt-4">
-   
-                
+
+
                 <ProductWhatsAppButton
                   phone="573147353497"
                   imageUrl={product.imagen}
@@ -187,39 +184,37 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
                   className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 font-medium"
                 />
               </div>
-                {/* Fullscreen image modal */}
-      {isImageOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
-          onClick={() => setIsImageOpen(false)}
-        >
-          <div
-            className="relative max-w-5xl w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              aria-label="Cerrar"
-              className="absolute -top-3 -right-3 md:top-0 md:right-0 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
-              onClick={() => setIsImageOpen(false)}
-            >
-              <X className="h-5 w-5" />
-            </button>
-            <div className="relative w-full aspect-[4/7] md:aspect-[16/9] bg-black">
-              <Image
-                fill
-                priority
-                src={product.imagen.replace(
-                  "/upload/",
-                  "/upload/q_auto,f_auto,e_improve/"
-                ) || "/placeholder.svg?height=1000&width=1200&query=modern product image"}
-                alt={product.nombre || "Producto"}
-                className="object-contain"
-              />
-            </div>
-          </div>
-        </div>
-      )}
- 
+              {/* Fullscreen image modal */}
+              {isImageOpen && (
+                <div
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+                  onClick={() => setIsImageOpen(false)}
+                >
+                  <div
+                    className="relative max-w-5xl w-full"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <button
+                      aria-label="Cerrar"
+                      className="absolute -top-3 -right-3 md:top-0 md:right-0 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow hover:bg-gray-100"
+                      onClick={() => setIsImageOpen(false)}
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                    <div className="relative w-full aspect-[4/7] md:aspect-[16/9] bg-black">
+                      <img
+                        src={product.imagen.replace(
+                          "/upload/",
+                          "/upload/q_auto,f_auto,e_improve/"
+                        ) || "/placeholder.svg?height=1000&width=1200&query=modern product image"}
+                        alt={product.nombre || "Producto"}
+                        className="object-contain"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
             </div>
           </div>
         </div>

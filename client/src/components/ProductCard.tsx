@@ -91,10 +91,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
             <Image
               width={400}
               height={500}
-              src={product.imagen?.replace(
-                /\/upload\/(?:[a-zA-Z0-9_,-]+\/)?/,
-                "/upload/q_auto,f_auto,e_improve/"
-              ) || "/placeholder.svg?height=400&width=400&query=modern product image"}
+              src={product.imagen || "/placeholder.svg?height=400&width=400&query=modern product image"}
               alt={product.nombre || "Producto"}
               className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out"
             />
@@ -214,10 +211,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
               <Image
                 fill
                 priority
-                src={product.imagen?.replace(
-                  /\/upload\/(?:[a-zA-Z0-9_,-]+\/)?/,
-                  "/upload/q_auto,f_auto,e_improve/"
-                ) || "/placeholder.svg?height=1000&width=1200&query=modern product image"}
+                src={product.imagen || "/placeholder.svg?height=1000&width=1200&query=modern product image"}
                 alt={product.nombre || "Producto"}
                 className="object-contain transition-transform duration-200"
                 style={{

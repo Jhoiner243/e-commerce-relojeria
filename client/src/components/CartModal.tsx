@@ -56,7 +56,7 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
 
   const getOptimizedImageUrl = (url: string | undefined | null) => {
     if (!url) return "";
-    return url.replace(/\/upload\/(?:[a-zA-Z0-9_,-]+\/)?/, "/upload/w_150,h_150,c_fill,q_auto,f_auto/");
+    return url;
   };
 
   const generateWhatsAppMessage = () => {

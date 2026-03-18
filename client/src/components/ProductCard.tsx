@@ -214,7 +214,10 @@ const ProductCard = ({ product }: { product: ProductType }) => {
               <Image
                 fill
                 priority
-                src={product.imagen || "/placeholder.svg?height=1000&width=1200&query=modern product image"}
+                src={product.imagen?.replace(
+                  /\/upload\/(?:[a-zA-Z0-9_,-]+\/)?/,
+                  "/upload/q_auto,f_auto,e_improve/"
+                ) || "/placeholder.svg?height=1000&width=1200&query=modern product image"}
                 alt={product.nombre || "Producto"}
                 className="object-contain transition-transform duration-200"
                 style={{

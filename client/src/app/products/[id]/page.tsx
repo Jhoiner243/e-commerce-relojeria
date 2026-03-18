@@ -97,7 +97,11 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
                   </div>
                 )}
                 <Image
-                  src={product.imagen || "/fallback.jpg"}
+                  src={product.imagen.replace(
+                    "/upload/",
+                    "/upload/q_auto,f_auto,e_improve/"
+
+                  ) || "/fallback.jpg"}
                   alt={product.nombre}
                   fill
                   className={`object-cover transition-opacity duration-300 ${
@@ -204,7 +208,10 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
               <Image
                 fill
                 priority
-                src={product.imagen || "/placeholder.svg?height=1000&width=1200&query=modern product image"}
+                src={product.imagen.replace(
+                  "/upload/",
+                  "/upload/q_auto,f_auto,e_improve/"
+                ) || "/placeholder.svg?height=1000&width=1200&query=modern product image"}
                 alt={product.nombre || "Producto"}
                 className="object-contain"
               />

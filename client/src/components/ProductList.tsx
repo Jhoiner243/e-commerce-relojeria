@@ -1,25 +1,16 @@
 "use client";
-import useFilterStore from "@/stores/filterStore";
 import Link from "next/link";
 import { useEffect, useMemo, useRef } from "react";
 import { useInfiniteProducts } from "../hooks/use-infinity-scroll";
-import Filter from "./Filter";
 import LoadingSpinner from "./LoadingSpinner";
 import ProductCard from "./ProductCard";
 
 const ProductList = ({ category, params }: { category: string, params: "homepage" | "products" }) => {
-  const { sortBy, setGender } = useFilterStore();
   const { data, size, setSize, isValidating, error, isLoading } = useInfiniteProducts(20, category);
 
   const hasMore = data?.[data.length - 1]?.nextCursor;
 
   const loaderRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if(params === "homepage") {
-      setGender("All")
-    }
-  }, [params, setGender])
 
   useEffect(() => {
     if (!loaderRef.current) return;
@@ -44,26 +35,13 @@ const ProductList = ({ category, params }: { category: string, params: "homepage
     const products = data.flatMap((page) => page.items);
     let sorted = [...products];
 
-    // Apply sorting
-    if (sortBy === "asc") {
-      sorted = sorted.sort((a, b) => a.precio - b.precio);
-    } else if (sortBy === "desc") {
-      sorted = sorted.sort((a, b) => b.precio - a.precio);
-    }
-
     return sorted;
-  }, [data, sortBy]);
+  }, [data]);
 
   // Show loading spinner on initial load
   if (isLoading) {
     return (
       <div className="w-full mx-auto sm:px-0 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
-        { params === "homepage" ? null : (
-          <div className="justify-items-end">
-          <Filter />
-          </div>
-        )
-        }
         <div className="flex justify-center items-center h-64">
           <LoadingSpinner size="lg" text="Cargando productos..." />
         </div>
@@ -74,12 +52,6 @@ const ProductList = ({ category, params }: { category: string, params: "homepage
   if (error) {
     return (
       <div className="w-full mx-auto sm:px-0 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
-        { params === "homepage" ? null : (
-          <div className="justify-items-end">
-          <Filter />
-          </div>
-        )
-        }
         <div className="flex justify-center items-center h-64">
           <div className="text-lg text-red-600">Error al cargar los productos</div>
         </div>
@@ -88,20 +60,13 @@ const ProductList = ({ category, params }: { category: string, params: "homepage
   }
 
   return (
-    <div className="w-full mx-auto sm:px-0 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
-        { params === "homepage" ? null : (
-          <div className="justify-items-end p-2">
-          <Filter />
-          </div>
-        )
-        }
-      
+    <div className="w-full mx-auto sm:px-0 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl mt-4">
       {sortedProducts.length === 0 && !isValidating ? (
         <div className="flex justify-center items-center h-64">
           <div className="text-center">
             <div className="text-lg text-gray-600 mb-4">No se encontraron productos</div>
             <p className="text-sm text-gray-500">
-              Intenta ajustar los filtros o busca en otra categoría
+              Intenta buscar en otra categoría
             </p>
           </div>
         </div>

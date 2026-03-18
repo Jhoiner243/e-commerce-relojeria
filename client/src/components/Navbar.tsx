@@ -6,9 +6,13 @@ import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 import AnnouncementBanner from "./AnnouncementBanner";
 import Sections from "./sections";
+import ShoppingCartIcon from "./ShoppingCartIcon";
+import CartModal from "./CartModal";
+import { useCartModal } from "@/contexts/CartModalContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { isCartOpen, closeCart } = useCartModal();
 
   // Cierra el menú si la pantalla crece a md o más
   useEffect(() => {
@@ -45,17 +49,21 @@ const Navbar = () => {
           <Link href="/" aria-label="Inicio">
             <Home className="w-5 h-5 text-gray-600 hover:text-gray-900 transition-colors" />
           </Link>
+          <ShoppingCartIcon />
         </div>
 
-        {/* Mobile: botón hamburguesa */}
-        <button
-          onClick={() => setIsOpen((prev) => !prev)}
-          className="md:hidden p-2 rounded-md hover:bg-gray-100 transition-colors"
-          aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
-          aria-expanded={isOpen}
-        >
-          {isOpen ? <X size={22} /> : <Menu size={22} />}
-        </button>
+        {/* Mobile: botón hamburguesa & Cart */}
+        <div className="md:hidden flex items-center gap-4">
+          <ShoppingCartIcon />
+          <button
+            onClick={() => setIsOpen((prev) => !prev)}
+            className="p-2 rounded-md hover:bg-gray-100 transition-colors"
+            aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={isOpen}
+          >
+            {isOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
       </nav>
 
       {/* Secciones de categorías — desktop siempre visible */}
@@ -126,6 +134,9 @@ const Navbar = () => {
           <Sections onLinkClick={() => setIsOpen(false)} mobile />
         </Suspense>
       </div>
+
+      {/* Cart Modal */}
+      <CartModal isOpen={isCartOpen} onClose={closeCart} />
     </div>
   );
 };

@@ -3,7 +3,6 @@ import useFilterStore from "@/stores/filterStore";
 import Link from "next/link";
 import { useEffect, useMemo, useRef } from "react";
 import { useInfiniteProducts } from "../hooks/use-infinity-scroll";
-import Filter from "./Filter";
 import LoadingSpinner from "./LoadingSpinner";
 import ProductCard from "./ProductCard";
 
@@ -55,48 +54,18 @@ const ProductList = ({ category, params }: { category: string, params: "homepage
     return sorted;
   }, [data, sortBy]);
 
-  // Show loading spinner on initial load
-  if (isLoading) {
-    return (
-      <div className="w-full mx-auto sm:px-0 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
-        {params === "homepage" ? null : (
-          <div className="justify-items-end">
-            <Filter />
-          </div>
-        )
-        }
-        <div className="flex justify-center items-center h-64">
-          <LoadingSpinner size="lg" text="Cargando productos..." />
-        </div>
-      </div>
-    );
-  }
+
 
   if (error) {
     return (
-      <div className="w-full mx-auto sm:px-0 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
-        {params === "homepage" ? null : (
-          <div className="justify-items-end">
-            <Filter />
-          </div>
-        )
-        }
-        <div className="flex justify-center items-center h-64">
-          <div className="text-lg text-red-600">Error al cargar los productos</div>
-        </div>
+      <div className="flex justify-center items-center h-64">
+        <div className="text-lg text-red-600">Error al cargar los productos</div>
       </div>
     );
   }
 
   return (
     <div className="w-full mx-auto sm:px-0 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
-      {params === "homepage" ? null : (
-        <div className="justify-items-end p-2">
-          <Filter />
-        </div>
-      )
-      }
-
       {sortedProducts.length === 0 && !isValidating ? (
         <div className="flex justify-center items-center h-64">
           <div className="text-center">

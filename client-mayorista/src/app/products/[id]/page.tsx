@@ -145,14 +145,13 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
                   </div>
                 )}
-                <Image
+                <img
                   src={product.imagen.replace(
                     "/upload/",
                     "/upload/q_auto,f_auto,e_improve/"
 
                   ) || "/fallback.jpg"}
                   alt={product.nombre}
-                  fill
                   className={`object-cover transition-opacity duration-300 ${imageLoading ? 'opacity-0' : 'opacity-100'
                     }`}
                   onLoad={() => setImageLoading(false)}

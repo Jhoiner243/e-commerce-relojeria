@@ -298,9 +298,7 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
                       onMouseLeave={handleMouseUp}
                       onWheel={handleWheel}
                     >
-                      <Image
-                        fill
-                        priority
+                      <img
                         src={product.imagen.replace(
                           "/upload/",
                           "/upload/q_auto,f_auto,e_improve/"

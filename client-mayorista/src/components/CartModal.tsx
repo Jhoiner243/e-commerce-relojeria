@@ -157,13 +157,12 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
                   >
                     {/* Image */}
                     <div className="relative w-20 h-20 flex-shrink-0 rounded-md overflow-hidden bg-white">
-                      <Image
+                      <img
                         src={
                           getOptimizedImageUrl(item.imagen) ||
                           "/placeholder.svg?height=80&width=80"
                         }
                         alt={item.nombre}
-                        fill
                         className="object-cover"
                       />
                     </div>

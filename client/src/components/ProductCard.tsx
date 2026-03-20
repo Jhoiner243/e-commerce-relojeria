@@ -211,9 +211,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
               onMouseLeave={handleMouseUp}
               onWheel={handleWheel}
             >
-              <Image
-                fill
-                priority
+              <img
                 src={product.imagen?.replace("/upload/", "/upload/w_600/") || "/placeholder.svg"}
                 alt={product.nombre || "Producto"}
                 className="object-contain transition-transform duration-200"

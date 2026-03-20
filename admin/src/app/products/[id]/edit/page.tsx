@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Save } from "lucide-react";
-import Image from "next/image";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -319,9 +319,7 @@ export default function EditProductPage({
                 />
                 {imagePreview && (
                   <div className="w-20 h-20 relative rounded-md overflow-hidden">
-                    <Image
-                      height={60}
-                      width={60}
+                    <img
                       src={imagePreview}
                       alt="Preview"
                       className="w-full h-full object-cover"

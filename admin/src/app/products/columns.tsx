@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogTrigger } from "@radix-ui/react-dialog";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Edit, Eye, EyeOff, MoreHorizontal, Trash2 } from "lucide-react";
-import Image from "next/image";
+
 import Link from "next/link";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
@@ -23,17 +23,15 @@ function ImageCell({ src, alt }: { src: string; alt: string }) {
     <Dialog>
       <DialogTrigger asChild>
         <div className="w-12 h-12 relative rounded-md overflow-hidden cursor-zoom-in hover:ring-2 hover:ring-primary transition-all">
-          <Image alt={alt} src={src} fill className="object-cover" sizes="48px" />
+          <img alt={alt} src={src} className="object-cover w-full h-full" />
         </div>
       </DialogTrigger>
       <DialogContent className="flex items-center justify-center p-4 bg-transparent border-none shadow-none max-w-fit">
         <div className="relative w-[min(90vw,600px)] h-[min(90vh,600px)]">
-          <Image
+          <img
             alt={alt}
             src={src}
-            fill
-            className="object-contain rounded-lg"
-            sizes="(max-width: 600px) 90vw, 600px"
+            className="object-contain rounded-lg w-full h-full"
           />
         </div>
       </DialogContent>

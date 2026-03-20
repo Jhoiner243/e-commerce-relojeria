@@ -5,7 +5,7 @@ import {
   Plus,
   User2
 } from "lucide-react";
-import Image from "next/image";
+
 import Link from "next/link";
 import AddCategory from "./AddCategory";
 import AddProduct from "./AddProduct";
@@ -49,7 +49,7 @@ const AppSidebar = () => {
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link href="/">
-                <Image src="/logo.svg" alt="logo" width={20} height={20} />
+                <img src="/logo.svg" alt="logo" width={20} height={20} />
                 <span>Guaca del reloj</span>
               </Link>
             </SidebarMenuButton>

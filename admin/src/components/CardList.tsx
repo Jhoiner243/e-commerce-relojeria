@@ -1,4 +1,4 @@
-import Image from "next/image";
+
 import { Card, CardContent, CardFooter, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 
@@ -132,11 +132,10 @@ const CardList = ({ title }: { title: string }) => {
                 className="flex-row items-center justify-between gap-4 p-4"
               >
                 <div className="w-12 h-12 rounded-sm relative overflow-hidden">
-                  <Image
+                  <img
                     src={Object.values(item.images)[0] || ""}
                     alt={item.name}
-                    fill
-                    className="object-cover"
+                    className="object-cover w-full h-full"
                   />
                 </div>
                 <CardContent className="flex-1 p-0">
@@ -153,11 +152,10 @@ const CardList = ({ title }: { title: string }) => {
                 className="flex-row items-center justify-between gap-4 p-4"
               >
                 <div className="w-12 h-12 rounded-sm relative overflow-hidden">
-                  <Image
+                  <img
                     src={item.image}
                     alt={item.title}
-                    fill
-                    className="object-cover"
+                    className="object-cover w-full h-full"
                   />
                 </div>
                 <CardContent className="flex-1 p-0">

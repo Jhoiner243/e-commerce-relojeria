@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Edit, Eye, EyeOff, Plus, Trash2, X } from "lucide-react";
-import Image from "next/image";
+
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -310,7 +310,7 @@ interface Promotion {
                   />
                   {imagePreview && (
                     <div className="w-20 h-20 relative rounded-md overflow-hidden">
-                      <Image
+                      <img
                         src={imagePreview}
                         alt="Preview"
                         className="w-full h-full object-cover"
@@ -343,11 +343,10 @@ interface Promotion {
         {promotions.map((promotion) => (
           <Card key={promotion.id} className="overflow-hidden">
             <div className="relative h-48">
-              <Image
+              <img
                 src={promotion.imagen}
                 alt={promotion.titulo}
-                fill
-                className="object-cover"
+                className="object-cover w-full h-full"
               />
               <div className="absolute top-2 right-2">
                 <Badge variant={promotion.isActive ? "default" : "destructive"}>

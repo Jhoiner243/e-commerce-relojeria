@@ -226,7 +226,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
                   "/upload/q_auto,f_auto,e_improve/"
                 ) || "/placeholder.svg?height=1000&width=1200&query=modern product image"}
                 alt={product.nombre || "Producto"}
-                className="object-contain transition-transform duration-200"
+                className="w-full h-full object-contain transition-transform duration-200 origin-center"
                 style={{
                   transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
                 }}

@@ -214,7 +214,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
               <img
                 src={product.imagen?.replace("/upload/", "/upload/w_600/") || "/placeholder.svg"}
                 alt={product.nombre || "Producto"}
-                className="object-contain transition-transform duration-200"
+                className="w-full h-full object-contain transition-transform duration-200 origin-center"
                 style={{
                   transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
                 }}

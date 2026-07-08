@@ -128,7 +128,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
           {/* Precio */}
           <div className="mt-auto py-2">
             <p className="text-lg font-semibold text-black">
-              {formatCurrency(product.precio)}
+              {formatCurrency(product.precioBarranquilla || product.precio)}
             </p>
           </div>
 

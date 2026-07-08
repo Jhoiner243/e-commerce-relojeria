@@ -61,14 +61,14 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
   const generateWhatsAppMessage = () => {
     const phone = "573135135343";
     const total = cart.reduce(
-      (acc, item) => acc + item.precio * item.quantity,
+      (acc, item) => acc + (item.precioBarranquilla || item.precio) * item.quantity,
       0
     );
 
     let message = `*MI PEDIDO*\n\n`;
 
     cart.forEach((item) => {
-      const price = item.precio;
+      const price = item.precioBarranquilla || item.precio;
       const subtotal = price * item.quantity;
       const imageUrl = getOptimizedImageUrl(item.imagen);
 
@@ -97,7 +97,7 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
   if (!hasHydrated || !mount) return null;
 
   const total = cart.reduce(
-    (acc, item) => acc + item.precio * item.quantity,
+    (acc, item) => acc + (item.precioBarranquilla || item.precio) * item.quantity,
     0
   );
 
@@ -146,7 +146,7 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
           ) : (
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {cart.map((item) => {
-                const price = item.precio;
+                const price = item.precioBarranquilla || item.precio;
                 const subtotal = price * item.quantity;
 
                 return (

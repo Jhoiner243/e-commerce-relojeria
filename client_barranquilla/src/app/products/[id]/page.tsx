@@ -143,7 +143,7 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
               {/* Price */}
               <div className="border-b border-gray-200 pb-4">
                 <p className="text-4xl font-bold text-gray-900">
-                  {product.precio ? formatCurrency(product.precio) : "N/A"}
+                  {product.precioBarranquilla ? formatCurrency(product.precioBarranquilla) : product.precio ? formatCurrency(product.precio) : "N/A"}
                 </p>
               </div>
 

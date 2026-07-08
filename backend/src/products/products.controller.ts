@@ -85,6 +85,46 @@ export class ProductsController {
     );
   }
 
+  @Get('barranquilla')
+  findAllBarranquilla(
+    @Query('take') take?: string,
+    @Query('cursor') cursor?: string,
+    @Query('gender') gender?: string,
+    @Query('minPrice') minPrice?: string,
+    @Query('maxPrice') maxPrice?: string,
+    @Query('category') category?: string,
+  ) {
+    const takeNumber = take ? parseInt(take, 10) : 20;
+
+    // Validate take parameter
+    if (take && (isNaN(takeNumber) || takeNumber <= 0 || takeNumber > 100)) {
+      throw new BadRequestException(
+        'Take parameter must be a positive number between 1 and 100',
+      );
+    }
+
+    // Parse price filters
+    const minPriceNumber = minPrice ? parseFloat(minPrice) : undefined;
+    const maxPriceNumber = maxPrice ? parseFloat(maxPrice) : undefined;
+
+    // Validate price parameters
+    if (minPrice && isNaN(minPriceNumber!)) {
+      throw new BadRequestException('minPrice must be a valid number');
+    }
+    if (maxPrice && isNaN(maxPriceNumber!)) {
+      throw new BadRequestException('maxPrice must be a valid number');
+    }
+
+    return this.productsService.findAllPaginatedBarranquilla(
+      takeNumber,
+      cursor,
+      gender,
+      minPriceNumber,
+      maxPriceNumber,
+      category,
+    );
+  }
+
   @Get('all')
   findAllWithInactive() {
     return this.productsService.findAllWithInactive();
@@ -172,6 +212,7 @@ export class ProductsController {
   update(
     @Param('id') id: string,
     @Body() body: Record<string, string | boolean>,
+    @UploadedFile() imagen?: Express.Multer.File,
   ) {
     const dto: UpdateProductDto = {
       ...(body as Record<string, unknown>),
@@ -200,6 +241,23 @@ export class ProductsController {
       (dto as unknown as { mayoristaPrice?: number }).mayoristaPrice = Number(
         body['mayoristaPrice'] as string,
       );
+    }
+    if (body && body['precioBarranquilla'] !== undefined) {
+      const val = body['precioBarranquilla'];
+      if (val === '' || val === 'null' || val === null) {
+        (dto as unknown as { precioBarranquilla?: number | null }).precioBarranquilla = null;
+      } else {
+        const num = Number(val);
+        if (!isNaN(num)) {
+          (dto as unknown as { precioBarranquilla?: number }).precioBarranquilla = num;
+        }
+      }
+    }
+
+    // Handle image upload
+    if (imagen) {
+      // Image will be handled by the service
+      dto.imagen = imagen as any;
     }
 
     return this.productsService.update(id, dto);

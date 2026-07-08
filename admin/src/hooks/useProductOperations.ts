@@ -179,8 +179,8 @@ export const useProductOperations = (options: UseProductOperationsOptions = {}) 
         data.append("mayoristaPrice", formData.mayoristaPrice.toString());
       }
       
-      if (formData.precioBarranquilla !== undefined && formData.precioBarranquilla !== 0) {
-        data.append("precioBarranquilla", formData.precioBarranquilla.toString());
+      if (formData.precioBarranquilla !== undefined) {
+        data.append("precioBarranquilla", formData.precioBarranquilla ? formData.precioBarranquilla.toString() : 'null');
       }
       
       if (formData.imagen && formData.imagen instanceof File) {

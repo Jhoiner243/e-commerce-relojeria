@@ -177,7 +177,7 @@ const ProductPage = ({ params }: { params: Promise<{ id: string }> }) => {
 
 
                 <ProductWhatsAppButton
-                  phone="573147353497"
+                  phone="573135135343"
                   imageUrl={product.imagen}
                   productName={product.nombre}
                   reference={product.reference}

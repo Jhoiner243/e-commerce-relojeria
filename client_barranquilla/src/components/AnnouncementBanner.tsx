@@ -19,7 +19,7 @@ const AnnouncementBanner = () => {
           <span className="border-l-2 border-white h-4"/>
 
           <span className="text-sm font-medium gap-2 right-0 hover:cursor-pointer hover:text-white/60 flex  left-0 m-2" 
-                onClick={() => window.open("https://wa.me/send?phone=573147353497", "_blank")}
+                onClick={() => window.open("https://wa.me/send?phone=573135135343", "_blank")}
           >
             <Phone className="w-4 h-4"/>
             Contáctanos

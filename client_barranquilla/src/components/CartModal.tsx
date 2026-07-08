@@ -59,7 +59,7 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
   };
 
   const generateWhatsAppMessage = () => {
-    const phone = "573147353497";
+    const phone = "573135135343";
     const total = cart.reduce(
       (acc, item) => acc + item.precio * item.quantity,
       0

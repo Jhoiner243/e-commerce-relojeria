@@ -52,7 +52,7 @@ const ProductInteraction = ({
       
       <ProductWhatsAppButton
         imageUrl={product.imagen}
-        phone="573001112233"
+        phone="573135135343"
         productName={product.nombre}
         reference={product.reference}
       />

@@ -47,7 +47,7 @@ type AddProductProps = {
 };
 
 const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
-  const {refreshProducts} = useProducts()
+  const { refreshProducts } = useProducts()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -60,18 +60,19 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
       imagen: undefined as unknown as File,
       mayorista: false,
       mayoristaPrice: "",
+      precioBarranquilla: "",
     },
   });
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [loadingCategorias, setLoadingCategorias] = useState<boolean>(false);
   const [categoriasError, setCategoriasError] = useState<string>("");
 
-  const { 
-    loading: submitting, 
-    error: submitError, 
-    success: submitSuccess, 
+  const {
+    loading: submitting,
+    error: submitError,
+    success: submitSuccess,
     clearMessages,
-    createProduct 
+    createProduct
   } = useProductOperations({
     onSuccess: () => {
       form.reset();
@@ -94,7 +95,7 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
         if (!res.ok) throw new Error("Error cargando categorías");
         const data = (await res.json()) as Categoria[];
         setCategorias(data);
-      } catch  {
+      } catch {
         setCategoriasError("No se pudieron cargar las categorías");
       } finally {
         setLoadingCategorias(false);
@@ -104,7 +105,7 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     clearMessages();
-    
+
     try {
       await createProduct({
         nombre: values.nombre,
@@ -116,6 +117,7 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
         imagen: values.imagen,
         mayorista: values.mayorista,
         mayoristaPrice: Number(values.mayoristaPrice),
+        precioBarranquilla: Number(values.precioBarranquilla) || undefined,
       });
     } catch (error) {
       // Error is already handled by useProductOperations
@@ -156,222 +158,239 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
                       onClose={clearMessages}
                     />
                   )}
-                <FormField
-                  control={form.control}
-                  name="nombre"
-                  render={({ field }) => (
+                  <FormField
+                    control={form.control}
+                    name="nombre"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nombre</FormLabel>
+                        <FormControl>
+                          <Input {...field} disabled={submitting} />
+                        </FormControl>
+                        <FormDescription>
+                          Nombre del producto
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField control={form.control} name="descripcion" render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nombre</FormLabel>
+                      <FormLabel>Descripcion</FormLabel>
                       <FormControl>
                         <Input {...field} disabled={submitting} />
                       </FormControl>
                       <FormDescription>
-                        Nombre del producto
+                        Descripcion del producto
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
-                />
-                <FormField control={form.control} name="descripcion" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Descripcion</FormLabel>
-                    <FormControl>
-                      <Input {...field} disabled={submitting} />
-                    </FormControl>
-                    <FormDescription>
-                      Descripcion del producto
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-                />
-                <FormField
-                  control={form.control}
-                  name="precio"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Precio</FormLabel>
-                      <FormControl>
-                        <Input type="number" {...field} disabled={submitting} />
-                      </FormControl>
-                      <FormDescription>
-                        Precio del producto
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="categoriaName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Categoria del producto</FormLabel>
-                      <FormControl>
-                        <Select
-                          value={field.value}
-                          onValueChange={field.onChange}
-                          disabled={loadingCategorias || submitting}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecciona una categoría" />
-                          </SelectTrigger>
-                          <SelectContent>
-                                                         {categorias.map((cat) => (
-                               <SelectItem key={cat.id} value={cat.id}>
-                                 {cat.nombre}
-                               </SelectItem>
-                             ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormDescription>
-                        Categoria del producto
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="productType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tipo de producto</FormLabel>
-                      <FormControl>
-                        <Select
-                          value={field.value}
-                          onValueChange={field.onChange}
-                          disabled={submitting}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Mayorista o Detal" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {productTypes.map((pt) => (
-                              <SelectItem key={pt} value={pt}>
-                                {pt}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormDescription>
-                        Visibilidad de precios y acceso
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-  <FormField
-                  control={form.control}
-                  name="gender"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Genero</FormLabel>
-                      <FormControl>
-                        <Select
-                          value={field.value}
-                          onValueChange={field.onChange}
-                          disabled={submitting}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Tipo de genero" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.values(gender).map((pt, idx) => (
-                              <SelectItem key={idx} value={pt}>
-                                {pt}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormDescription>
-                        Genero del producto
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="imagen"
-                  render={({ field: { onChange} }) => (
-                    <div>
-
-                    <FormItem>
-                      <FormLabel>Imagen</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          disabled={submitting}
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) onChange(file);
-                          }}
-                        />
-                      </FormControl>
-                      <FormDescription>Sube una imagen del producto</FormDescription>
-                    </FormItem>
-                      <FormMessage />
-                    </div>
-
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="mayoristaPrice"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Precio Mayorista (Opcional)</FormLabel>
-                      <FormControl>
-                        <Input type="number" step="0.01" {...field} disabled={submitting} />
-                      </FormControl>
-                      <FormDescription>
-                        Precio especial para mayoristas
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="mayorista"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                      <FormControl>
-                        <input
-                          type="checkbox"
-                          checked={field.value}
-                          onChange={field.onChange}
-                          disabled={submitting}
-                          className="rounded"
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>Producto Mayorista</FormLabel>
+                  />
+                  <FormField
+                    control={form.control}
+                    name="precio"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Precio</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} disabled={submitting} />
+                        </FormControl>
                         <FormDescription>
-                          Marcar si este producto está disponible para mayoristas
+                          Precio del producto
                         </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="categoriaName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Categoria del producto</FormLabel>
+                        <FormControl>
+                          <Select
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            disabled={loadingCategorias || submitting}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecciona una categoría" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {categorias.map((cat) => (
+                                <SelectItem key={cat.id} value={cat.id}>
+                                  {cat.nombre}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormDescription>
+                          Categoria del producto
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="productType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tipo de producto</FormLabel>
+                        <FormControl>
+                          <Select
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            disabled={submitting}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Mayorista o Detal" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {productTypes.map((pt) => (
+                                <SelectItem key={pt} value={pt}>
+                                  {pt}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormDescription>
+                          Visibilidad de precios y acceso
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="gender"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Genero</FormLabel>
+                        <FormControl>
+                          <Select
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            disabled={submitting}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Tipo de genero" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.values(gender).map((pt, idx) => (
+                                <SelectItem key={idx} value={pt}>
+                                  {pt}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormDescription>
+                          Genero del producto
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="imagen"
+                    render={({ field: { onChange } }) => (
+                      <div>
+
+                        <FormItem>
+                          <FormLabel>Imagen</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              disabled={submitting}
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) onChange(file);
+                              }}
+                            />
+                          </FormControl>
+                          <FormDescription>Sube una imagen del producto</FormDescription>
+                        </FormItem>
+                        <FormMessage />
                       </div>
-                    </FormItem>
-                  )}
-                />
-               
-               
-                <Button type="submit" disabled={submitting || loadingCategorias || categorias.length === 0}>
-                  {submitting ? "Guardando..." : "Guardar"}
-                </Button>
-              </form>
-            </Form>
-          </SheetDescription>
-        </SheetHeader>
-      </ScrollArea>
+
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="mayoristaPrice"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Precio Mayorista (Opcional)</FormLabel>
+                        <FormControl>
+                          <Input type="number" step="0.01" {...field} disabled={submitting} />
+                        </FormControl>
+                        <FormDescription>
+                          Precio especial para mayoristas
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="precioBarranquilla"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Precio Barranquilla (Opcional)</FormLabel>
+                        <FormControl>
+                          <Input type="number" step="0.01" {...field} disabled={submitting} />
+                        </FormControl>
+                        <FormDescription>
+                          Precio especial para clientes de Barranquilla.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="mayorista"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                        <FormControl>
+                          <input
+                            type="checkbox"
+                            checked={field.value}
+                            onChange={field.onChange}
+                            disabled={submitting}
+                            className="rounded"
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>Producto Mayorista</FormLabel>
+                          <FormDescription>
+                            Marcar si este producto está disponible para mayoristas
+                          </FormDescription>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+
+
+                  <Button type="submit" disabled={submitting || loadingCategorias || categorias.length === 0}>
+                    {submitting ? "Guardando..." : "Guardar"}
+                  </Button>
+                </form>
+              </Form>
+            </SheetDescription>
+          </SheetHeader>
+        </ScrollArea>
       </LoadingOverlay>
     </SheetContent>
   );

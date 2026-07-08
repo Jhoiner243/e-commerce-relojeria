@@ -13,6 +13,7 @@ interface ProductFormData {
   imagen?: File | string;
   mayorista?: boolean;
   mayoristaPrice?: number;
+  precioBarranquilla?: number;
   isActive?: boolean;
 }
 
@@ -112,6 +113,10 @@ export const useProductOperations = (options: UseProductOperationsOptions = {}) 
       if (formData.mayoristaPrice !== undefined) {
         data.append("mayoristaPrice", formData.mayoristaPrice.toString());
       }
+      
+      if (formData.precioBarranquilla !== undefined && formData.precioBarranquilla !== 0) {
+        data.append("precioBarranquilla", formData.precioBarranquilla.toString());
+      }
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
         method: "POST",
@@ -172,6 +177,10 @@ export const useProductOperations = (options: UseProductOperationsOptions = {}) 
       
       if (formData.mayoristaPrice !== undefined) {
         data.append("mayoristaPrice", formData.mayoristaPrice.toString());
+      }
+      
+      if (formData.precioBarranquilla !== undefined && formData.precioBarranquilla !== 0) {
+        data.append("precioBarranquilla", formData.precioBarranquilla.toString());
       }
       
       if (formData.imagen && formData.imagen instanceof File) {

@@ -50,6 +50,7 @@ export type Product = {
   productType: string;
   mayorista: boolean;
   mayoristaPrice: number;
+  precioBarranquilla?: number | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -147,6 +148,22 @@ export const createColumns = ({ onSoftDelete, onRestore, onDelete, onToggleWhole
             <span className="text-xs text-gray-500 mt-1">
               ${product.mayoristaPrice.toFixed(2)}
             </span>
+          )}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "precioBarranquilla",
+    header: "P. Barranquilla",
+    cell: ({ row }) => {
+      const product = row.original;
+      return (
+        <div className="text-sm">
+          {product.precioBarranquilla && product.precioBarranquilla > 0 ? (
+            <span className="font-medium">${product.precioBarranquilla.toFixed(2)}</span>
+          ) : (
+            <span className="text-gray-400">—</span>
           )}
         </div>
       );

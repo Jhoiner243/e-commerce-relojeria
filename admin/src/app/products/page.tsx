@@ -57,6 +57,7 @@ const ProductsPage = () => {
       (filteredProducts || []).map((product) => ({
         ...product,
         precio: formatCurrency(product.precio),
+        precioBarranquilla: product.precioBarranquilla || null,
       })),
     [filteredProducts]
   );

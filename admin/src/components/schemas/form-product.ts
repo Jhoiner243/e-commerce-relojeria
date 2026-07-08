@@ -15,4 +15,5 @@ export const formSchema = z.object({
   imagen: z.instanceof(File, { message: "Imagen requerida" }),
   mayorista: z.boolean().optional(),
   mayoristaPrice: z.string().optional(),
+  precioBarranquilla: z.string().optional(),
 });

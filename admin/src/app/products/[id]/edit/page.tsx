@@ -36,6 +36,7 @@ interface Product {
   isActive: boolean;
   mayorista: boolean;
   mayoristaPrice: number;
+  precioBarranquilla?: number | null;
 }
 
 export default function EditProductPage({
@@ -118,6 +119,7 @@ export default function EditProductPage({
         isActive: product.isActive,
         mayorista: product.mayorista,
         mayoristaPrice: product.mayoristaPrice,
+        precioBarranquilla: product.precioBarranquilla ?? undefined,
         imagen: imageFile ?? '',
       });
     } catch (err) {
@@ -292,6 +294,26 @@ export default function EditProductPage({
                     })
                   }
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="precioBarranquilla">Precio Barranquilla (Opcional)</Label>
+                <Input
+                  id="precioBarranquilla"
+                  type="number"
+                  step="0.01"
+                  value={product.precioBarranquilla || ""}
+                  onChange={(e) =>
+                    setProduct({
+                      ...product,
+                      precioBarranquilla: parseFloat(e.target.value) || null,
+                    })
+                  }
+                  placeholder="Dejar vacío si no aplica"
+                />
+                <p className="text-sm text-gray-500">
+                  Solo se muestra en client_barranquilla si se establece
+                </p>
               </div>
             </div>
 

@@ -16,12 +16,12 @@ export const useCategories = () => {
     try {
       setLoading(true);
       setError(null);
-      
-      const response = await fetch('http://localhost:3003/api/categorias');
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005/api'}/categorias`);
       if (!response.ok) {
         throw new Error('Error al cargar categorías');
       }
-      
+
       const data = await response.json();
       setCategories(data);
     } catch (err) {

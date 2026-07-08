@@ -33,34 +33,35 @@ const AddCategory = () => {
     defaultValues: { nombre: "" },
   });
   const [loading, setLoading] = useState(false);
+  const descriptionId = "add-category-description";
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categorias`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
-    });
-    if (!res.ok) {
-      throw new Error("Error al crear categoría");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005/api'}/categorias`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+      if (!res.ok) {
+        throw new Error("Error al crear categoría");
+      }
+
+      form.reset();
+      toast.success("Categoría creada correctamente");
+
+    } catch {
+      toast.error("Error al crear categoría");
+    } finally {
+      setLoading(false);
     }
-
-    form.reset();
-    toast.success("Categoría creada correctamente");
-
-  } catch {
-    toast.error("Error al crear categoría");
-  } finally {
-    setLoading(false);
-  }
 
   }
   return (
-    <SheetContent>
+    <SheetContent aria-describedby={descriptionId}>
       <SheetHeader>
         <SheetTitle className="mb-4">Agregar categoría</SheetTitle>
-        <SheetDescription asChild>
+        <SheetDescription id={descriptionId} asChild>
           <Form {...form}>
             <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
               <FormField

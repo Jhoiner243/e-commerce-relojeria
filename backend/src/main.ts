@@ -24,9 +24,9 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(process.env.PORT ?? 3003);
+  await app.listen(process.env.PORT ?? 3005);
   logger.log(
-    `Application is running on: http://localhost:${process.env.PORT ?? 3003}`,
+    `Application is running on: http://localhost:${process.env.PORT ?? 3005}`,
   );
 }
 bootstrap();

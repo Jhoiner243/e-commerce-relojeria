@@ -24,6 +24,7 @@ model Product {
   categoriaName String
   mayorista Boolean @default(false)
   mayoristaPrice Float @default(0)
+  precioBarranquilla Float?
   gender Gender @default(Hombre)
   categoria  Categoria @relation(fields: [categoriaName], references: [id])
   isActive  Boolean  @default(true)

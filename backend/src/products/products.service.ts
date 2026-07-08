@@ -13,7 +13,7 @@ export class ProductsService {
     @Inject(ProductsRepository)
     private readonly productsRepository: ProductsRepository,
     private readonly cloudinaryService: CloudinaryService,
-  ) {}
+  ) { }
 
   async create(
     createProductDto: CreateProductDto,
@@ -45,6 +45,7 @@ export class ProductsService {
       productType: createProductDto.productType,
       mayoristaPrice: createProductDto.mayoristaPrice ?? 0,
       mayorista: createProductDto.mayorista ?? false,
+      precioBarranquilla: createProductDto.precioBarranquilla,
     };
 
     const product = await this.productsRepository.create(productData);
@@ -94,6 +95,24 @@ export class ProductsService {
     category?: string,
   ) {
     return this.productsRepository.findAllPaginatedMayorista(
+      take,
+      cursor,
+      gender,
+      minPrice,
+      maxPrice,
+      category,
+    );
+  }
+
+  async findAllPaginatedBarranquilla(
+    take: number,
+    cursor?: string,
+    gender?: string,
+    minPrice?: number,
+    maxPrice?: number,
+    category?: string,
+  ) {
+    return this.productsRepository.findAllPaginatedBarranquilla(
       take,
       cursor,
       gender,

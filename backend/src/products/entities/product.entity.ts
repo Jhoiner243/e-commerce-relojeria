@@ -37,4 +37,8 @@ export class ProductEntity {
   @IsOptional()
   @IsBoolean()
   mayorista?: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  precioBarranquilla?: number;
 }

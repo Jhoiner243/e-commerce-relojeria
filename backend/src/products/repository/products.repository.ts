@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Inject, Injectable } from '@nestjs/common';
 import { MayoristaOrDetal, Prisma } from '../../../generated/prisma/client';
 import { PrismaService } from '../../common/prisma/prisma';
@@ -105,6 +104,83 @@ export class ProductsRepository {
       nextCursor,
     };
   }
+
+  async findAllPaginatedBarranquilla(
+    take: number,
+    cursor?: string,
+    gender?: string,
+    minPrice?: number,
+    maxPrice?: number,
+    category?: string,
+  ) {
+    const cursorCondition = cursor ? { id: cursor } : undefined;
+
+    // Build where conditions - only products with precioBarranquilla set
+    const whereConditions: Prisma.ProductWhereInput = {
+      isActive: true,
+      precioBarranquilla: {
+        not: null,
+      },
+    };
+
+    // Add gender filter
+    if (gender && gender !== 'all') {
+      whereConditions.gender = gender as any;
+    }
+
+    // Add price filters (on precioBarranquilla)
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      whereConditions.precioBarranquilla = {
+        not: null,
+        ...(minPrice !== undefined && { gte: minPrice }),
+        ...(maxPrice !== undefined && { lte: maxPrice }),
+      };
+    }
+
+    // Add category filter
+    if (category) {
+      whereConditions.categoriaName = category;
+    }
+
+    const products = await this.prisma.product.findMany({
+      take: take + 1,
+      cursor: cursorCondition,
+      where: whereConditions,
+      orderBy: {
+        id: 'asc',
+      },
+      include: {
+        categoria: true,
+      },
+    });
+
+    let nextCursor: string | undefined = undefined;
+    const items = products.slice(0, take);
+
+    if (products.length > take) {
+      nextCursor = products[take - 1].id;
+    }
+
+    // Return precioBarranquilla as precio for frontend compatibility
+    return {
+      items: items.map((product) => ({
+        id: product.id,
+        nombre: product.nombre,
+        descripcion: product.descripcion,
+        precio: product.precioBarranquilla,
+        imagen: product.imagen,
+        categoriaName: product.categoriaName,
+        productType: product.productType,
+        gender: product.gender,
+        reference: product.id,
+        mayorista: product.mayorista,
+        mayoristaPrice: product.mayoristaPrice,
+        precioBarranquilla: product.precioBarranquilla,
+      })),
+      nextCursor,
+    };
+  }
+
   async findAllPaginatedMayorista(
     take: number,
     cursor?: string,
@@ -162,7 +238,6 @@ export class ProductsRepository {
     if (products.length > take) {
       nextCursor = products[take - 1].id;
     }
-    console.log(items);
     return {
       items: items.map((product) => ({
         id: product.id,

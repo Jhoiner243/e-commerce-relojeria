@@ -45,6 +45,10 @@ export class CreateProductDto {
   mayoristaPrice?: number;
 
   @IsOptional()
+  @IsNumber()
+  precioBarranquilla?: number;
+
+  @IsOptional()
   @IsBoolean()
   mayorista?: boolean;
 }

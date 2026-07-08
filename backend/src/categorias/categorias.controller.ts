@@ -13,11 +13,11 @@ import { UpdateCategoriaDto } from './dto/update-categoria.dto';
 
 @Controller('categorias')
 export class CategoriasController {
-  constructor(private readonly categoriasService: CategoriasService) {}
+  constructor(private readonly categoriasService: CategoriasService) { }
 
   @Post()
   create(@Body() createCategoriaDto: CreateCategoriaDto) {
-    console.log(createCategoriaDto);
+    console.log('createCategoriaDto', createCategoriaDto);
     return this.categoriasService.create(createCategoriaDto);
   }
 

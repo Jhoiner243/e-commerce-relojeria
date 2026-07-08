@@ -5,4 +5,5 @@ export class UpdateProductDto extends PartialType(ProductEntity) {
   isActive?: boolean;
   mayorista?: boolean;
   mayoristaPrice?: number;
+  precioBarranquilla?: number;
 }

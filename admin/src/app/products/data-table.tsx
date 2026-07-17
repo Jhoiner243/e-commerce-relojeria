@@ -24,11 +24,19 @@ import { useState } from "react";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  pageIndex: number;
+  pageSize: number;
+  onPageIndexChange: (pageIndex: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  pageIndex,
+  pageSize,
+  onPageIndexChange,
+  onPageSizeChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -41,9 +49,23 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
+    onPaginationChange: (updater) => {
+      if (typeof updater === "function") {
+        const newPagination = updater(table.getState().pagination);
+        onPageIndexChange(newPagination.pageIndex);
+        onPageSizeChange(newPagination.pageSize);
+      } else {
+        onPageIndexChange(updater.pageIndex);
+        onPageSizeChange(updater.pageSize);
+      }
+    },
     state: {
       sorting,
       rowSelection,
+      pagination: {
+        pageIndex,
+        pageSize,
+      },
     },
   });
 

@@ -35,18 +35,19 @@ import { Input } from "./ui/input";
 import { LoadingOverlay } from "./ui/loading-overlay";
 import Notification from "./ui/notification";
 import { ScrollArea } from "./ui/scroll-area";
+import { useRouter } from "next/navigation";
 
 type Categoria = { id: string; nombre: string };
-
-
 
 
 type AddProductProps = {
   onCreated?: () => void;
   onClose?: () => void;
+  searchParams?: URLSearchParams;
 };
 
-const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
+const AddProduct = ({ onCreated, onClose, searchParams }: AddProductProps) => {
+  const router = useRouter();
   const { refreshProducts } = useProducts()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -67,6 +68,14 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
   const [loadingCategorias, setLoadingCategorias] = useState<boolean>(false);
   const [categoriasError, setCategoriasError] = useState<string>("");
 
+  const buildRedirectUrl = (basePath: string) => {
+    const params = new URLSearchParams();
+    if (searchParams?.get("q")) params.set("q", searchParams.get("q")!);
+    if (searchParams?.get("page")) params.set("page", searchParams.get("page")!);
+    if (searchParams?.get("pageSize")) params.set("pageSize", searchParams.get("pageSize")!);
+    return params.toString() ? `${basePath}?${params.toString()}` : basePath;
+  };
+
   const {
     loading: submitting,
     error: submitError,
@@ -79,6 +88,8 @@ const AddProduct = ({ onCreated, onClose }: AddProductProps) => {
       refreshProducts();
       if (onCreated) onCreated();
       if (onClose) onClose();
+      // Redirect preserving pagination and search state
+      router.push(buildRedirectUrl("/products"));
     },
     onError: (error) => {
       console.error('Error creating product:', error);

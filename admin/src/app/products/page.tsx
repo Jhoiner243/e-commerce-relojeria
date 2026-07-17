@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@radix-ui/react-dialog";
 import { useDebounce } from "@uidotdev/usehooks";
 import { Plus } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import AddProduct from "../../components/AddProduct";
 import { useProducts } from "../../hooks/useProducts";
 import { formatCurrency } from "../../lib/format-currency";
@@ -15,18 +15,43 @@ const ProductsPage = () => {
   const { products, error, loading, softDeleteProduct, restoreProduct, deleteProduct } = useProducts();
 
   const searchParams = useSearchParams();
-  const { replace } = useRouter();
+  const { replace, push } = useRouter();
 
   // Estado de búsqueda (controlado desde la URL)
   const [searchParam, setSearchParam] = useState(searchParams.get("q") || "");
   const debouncedSearch = useDebounce(searchParam, 400);
 
-  // Actualiza la URL cuando cambia el debounce
+  // Estado de paginación (controlado desde la URL)
+  const [pageIndex, setPageIndex] = useState(() => {
+    const page = searchParams.get("page");
+    return page ? parseInt(page, 10) : 0;
+  });
+  const [pageSize, setPageSize] = useState(() => {
+    const size = searchParams.get("pageSize");
+    return size ? parseInt(size, 10) : 10;
+  });
+
+  // Actualiza la URL cuando cambia la búsqueda
   useEffect(() => {
     const query = debouncedSearch.trim();
-    const newPath = query ? `/products?q=${encodeURIComponent(query)}` : `/products`;
+    const params = new URLSearchParams();
+    if (query) params.set("q", query);
+    if (pageIndex > 0) params.set("page", pageIndex.toString());
+    if (pageSize !== 10) params.set("pageSize", pageSize.toString());
+    const newPath = params.toString() ? `/products?${params.toString()}` : `/products`;
     replace(newPath, { scroll: false });
-  }, [debouncedSearch, replace]);
+  }, [debouncedSearch, pageIndex, pageSize, replace]);
+
+  // Función para navegar preservando todos los parámetros
+  const navigateWithParams = useCallback((path: string) => {
+    const params = new URLSearchParams();
+    const query = debouncedSearch.trim();
+    if (query) params.set("q", query);
+    if (pageIndex > 0) params.set("page", pageIndex.toString());
+    if (pageSize !== 10) params.set("pageSize", pageSize.toString());
+    const newPath = params.toString() ? `${path}?${params.toString()}` : path;
+    push(newPath);
+  }, [debouncedSearch, pageIndex, pageSize, push]);
 
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
@@ -98,13 +123,13 @@ const ProductsPage = () => {
         },
         body: JSON.stringify({
           mayorista: isWholesale,
-          mayoristaPrice: isWholesale ? 0 : 0, // Will be set properly in edit form
+          mayoristaPrice: isWholesale ? 0 : 0,
         }),
       });
       
       if (response.ok) {
-        // Refresh the products list
-        window.location.reload();
+        // Refresh the products list preserving pagination state
+        navigateWithParams("/products");
       } else {
         alert('Error al actualizar el estado mayorista');
       }
@@ -150,11 +175,18 @@ const ProductsPage = () => {
         </div>
 
         {/* Tabla */}
-        <DataTable columns={columns} data={productsMap} />
+        <DataTable 
+          columns={columns} 
+          data={productsMap} 
+          pageIndex={pageIndex}
+          pageSize={pageSize}
+          onPageIndexChange={setPageIndex}
+          onPageSizeChange={setPageSize}
+        />
       </div>
 
       <DialogContent>
-        <AddProduct />
+        <AddProduct searchParams={searchParams} />
       </DialogContent>
     </Dialog>
   );

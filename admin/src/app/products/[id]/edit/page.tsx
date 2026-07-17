@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Save } from "lucide-react";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LoadingOverlay, LoadingSpinner } from "../../../../components/ui/loading-overlay";
 import Notification from "../../../../components/ui/notification";
@@ -45,12 +45,16 @@ export default function EditProductPage({
   params: { id: string };
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { id } = params;
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
+
+  // Build return URL with preserved params
+  const returnUrl = searchParams.toString() ? `/products?${searchParams.toString()}` : "/products";
 
   const { 
     loading: saving, 
@@ -60,7 +64,7 @@ export default function EditProductPage({
     updateProduct 
   } = useProductOperations({
     onSuccess: () => {
-      router.push("/products");
+      router.push(returnUrl);
     },
     onError: (error) => {
       console.error('Error updating product:', error);
@@ -485,7 +489,7 @@ export default function EditProductPage({
             </div>
 
             <div className="flex justify-end space-x-4">
-              <Link href="/products">
+              <Link href={returnUrl}>
                 <Button type="button" variant="outline">
                   Cancelar
                 </Button>

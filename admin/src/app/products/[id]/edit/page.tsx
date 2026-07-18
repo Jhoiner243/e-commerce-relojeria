@@ -157,7 +157,7 @@ export default function EditProductPage({
     <div className="container mx-auto py-6">
       <div className="mb-6">
         <Link
-          href="/products"
+          href={returnUrl}
           className="flex items-center text-gray-600 hover:text-gray-900"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />

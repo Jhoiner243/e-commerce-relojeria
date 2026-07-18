@@ -60,9 +60,10 @@ interface ColumnsProps {
   onRestore: (id: string) => void;
   onDelete: (id: string) => void;
   onToggleWholesale: (id: string, isWholesale: boolean) => void;
+  paginationParams: string;
 }
 
-export const createColumns = ({ onSoftDelete, onRestore, onDelete, onToggleWholesale }: ColumnsProps): ColumnDef<Product>[] => [
+export const createColumns = ({ onSoftDelete, onRestore, onDelete, onToggleWholesale, paginationParams }: ColumnsProps): ColumnDef<Product>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -204,7 +205,7 @@ export const createColumns = ({ onSoftDelete, onRestore, onDelete, onToggleWhole
             <DropdownMenuSeparator />
 
             <DropdownMenuItem>
-              <Link href={`/products/${product.id}/edit`} className="flex items-center">
+              <Link href={`/products/${product.id}/edit${paginationParams}`} className="flex items-center">
                 <Edit className="mr-2 h-4 w-4" />
                 Editar
               </Link>

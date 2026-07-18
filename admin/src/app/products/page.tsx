@@ -143,6 +143,15 @@ const ProductsPage = () => {
     onRestore: handleRestore,
     onDelete: handleDelete,
     onToggleWholesale: handleToggleWholesale,
+    paginationParams: (() => {
+      const params = new URLSearchParams();
+      const q = debouncedSearch.trim();
+      if (q) params.set("q", q);
+      if (pageIndex > 0) params.set("page", pageIndex.toString());
+      if (pageSize !== 10) params.set("pageSize", pageSize.toString());
+      const str = params.toString();
+      return str ? `?${str}` : "";
+    })(),
   });
 
   if (error) return <p className="text-red-500">{error}</p>;

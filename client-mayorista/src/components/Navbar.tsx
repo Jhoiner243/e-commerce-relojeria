@@ -66,16 +66,14 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Secciones de categorías — desktop siempre visible */}
-      <div className="hidden md:block">
-        <Suspense fallback={
-          <div className="flex justify-center items-center p-3 border-b border-t border-gray-200 w-full">
-            <div className="text-sm text-gray-500">Cargando...</div>
-          </div>
-        }>
-          <Sections onLinkClick={() => setIsOpen(false)} />
-        </Suspense>
-      </div>
+      {/* Secciones de categorías — visibles en todos los tamaños */}
+      <Suspense fallback={
+        <div className="flex justify-center items-center p-3 border-y border-gray-200 w-full">
+          <div className="text-sm text-gray-500">Cargando...</div>
+        </div>
+      }>
+        <Sections onLinkClick={() => setIsOpen(false)} />
+      </Suspense>
 
       {/* Overlay oscuro */}
       {isOpen && (
@@ -122,17 +120,6 @@ const Navbar = () => {
           </Link>
         </nav>
 
-        {/* Divisor */}
-        <div className="px-4 pb-2">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Categorías</p>
-        </div>
-
-        {/* Secciones (categorías) en móvil */}
-        <Suspense fallback={
-          <div className="px-4 py-2 text-sm text-gray-400">Cargando categorías...</div>
-        }>
-          <Sections onLinkClick={() => setIsOpen(false)} mobile />
-        </Suspense>
       </div>
 
       {/* Cart Modal */}

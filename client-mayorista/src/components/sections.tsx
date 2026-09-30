@@ -12,10 +12,9 @@ interface Section {
 
 interface SectionsProps {
   onLinkClick?: () => void;
-  mobile?: boolean;
 }
 
-export default function Sections({ onLinkClick, mobile = false }: SectionsProps) {
+export default function Sections({ onLinkClick }: SectionsProps) {
   const searchParams = useSearchParams();
   const currentGender = searchParams.get('gender');
   const { setGender } = useFilterStore();
@@ -27,9 +26,12 @@ export default function Sections({ onLinkClick, mobile = false }: SectionsProps)
     { title: "Parejas", slug: "Parejas", url: `/products?gender=Parejas` },
   ];
 
-  if (mobile) {
-    return (
-      <nav className="px-3 space-y-1">
+  return (
+    <div className="w-full border-y border-gray-200 mt-1 sm:mt-2">
+      <nav
+        className="mx-auto grid w-full max-w-6xl grid-cols-4 md:flex md:flex-wrap md:items-center md:justify-center md:gap-6 lg:gap-20"
+        aria-label="Categorías"
+      >
         {sections.map((section) => {
           const isActive = currentGender === section.slug;
           return (
@@ -40,41 +42,12 @@ export default function Sections({ onLinkClick, mobile = false }: SectionsProps)
                 setGender(section.slug as GenderFilter);
                 onLinkClick?.();
               }}
-              className={`block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive
-                  ? "bg-gray-100 text-gray-900 font-semibold"
+              className={`flex min-h-11 items-center justify-center px-2 py-2.5 text-center text-xs font-medium leading-none whitespace-nowrap transition-colors sm:px-3 sm:text-sm md:min-h-0 md:rounded-md md:px-3 md:py-2 md:text-base ${isActive
+                  ? "bg-gray-200 font-semibold text-gray-900"
                   : "text-gray-700 hover:bg-gray-100"
                 }`}
             >
               {section.title}
-            </Link>
-          );
-        })}
-      </nav>
-    );
-  }
-
-  return (
-    <div className="flex justify-center items-center p-3 border-b border-t border-gray-200 mt-2 w-full">
-      <nav className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 md:gap-20">
-        {sections.map((section) => {
-          const isActive = currentGender === section.slug;
-          return (
-            <Link 
-              key={section.title} 
-              href={section.url} 
-              onClick={() => {
-                setGender(section.slug as GenderFilter);
-                onLinkClick?.();
-              }}
-            >
-              <div
-                className={`flex items-center justify-center rounded-md transition-colors px-3 py-2 text-sm sm:text-base ${isActive
-                    ? "bg-gray-200 font-semibold text-gray-900"
-                    : "hover:bg-gray-100"
-                  }`}
-              >
-                <span>{section.title}</span>
-              </div>
             </Link>
           );
         })}
